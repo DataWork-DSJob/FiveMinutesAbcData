@@ -1,0 +1,18 @@
+
+# env.java.opts.jobmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42040"
+# env.java.opts.taskmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42050"
+
+
+# Flink Metrics on Promgateway
+# metrics.reporter.promgateway.class: org.apache.flink.metrics.prometheus.PrometheusPushGatewayReporter
+# metrics.reporter.promgateway.host: bdnode102
+# metrics.reporter.promgateway.port: 9091
+# metrics.reporter.promgateway.jobName: jaxFlinkJob
+# metrics.reporter.promgateway.randomJobNameSuffix: true
+# metrics.reporter.promgateway.deleteOnShutdown: false
+
+# Flink Metrics on Kafka
+metrics.reporter.kafka.factory.class: org.apache.flink.metrics.kafka.KafkaReporterFactory
+metrics.reporter.kafka.bootstrapServers: bdnode102:9092
+metrics.reporter.kafka.topic: flink-metrics
+metrics.reporter.kafka.chunkSize: 20
