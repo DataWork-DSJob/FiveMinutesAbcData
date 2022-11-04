@@ -21,6 +21,12 @@
 
 ## 交流和贡献
 
+本项目资源镜像; 国内用Gitee(码云)下载更快
+* Github: [Github FiveMinutesAbcData](https://github.com/DataWork-DSJob/FiveMinutesAbcData) 
+* Gitee 码云:  [Gitee FiveMinutesAbcData](https://gitee.com/allenhe888/FiveMinutesAbcData) 
+
+
+
 ### 社区交流群
 
 ![低代码-流作业开发平台-微信交流群](docs/wechat_community/wxq_lowCode_Stream_Dev.jpg)
