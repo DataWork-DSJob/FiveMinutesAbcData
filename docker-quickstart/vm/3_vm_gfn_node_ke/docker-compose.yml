@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  victoriametrics_vm_8428:
+    image: victoriametrics/victoria-metrics
+    container_name: victoriametrics_vm_8428
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./vm-data:/victoria-metrics-data
+      - ./victoriametrics:/victoriametrics
+      - ./prometheus.yml:/etc/prometheus.yml
+    command:
+      - '-promscrape.config=/etc/prometheus.yml'
+      - '-retentionPeriod=30d'
+
+  grafana_vm_3000:
+    image: grafana/grafana:8.3.5
+    container_name: grafana_vm_3000
+    ports:
+      - "3000:3000"
+
+  node_exporter_vm_9100:
+    image: quay.io/prometheus/node-exporter:v1.3.1
+    container_name: node_exporter_vm_9100
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+
+  kafka_exporter_vm_9308:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka_exporter_vm_9308
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=192.168.51.112:9092'

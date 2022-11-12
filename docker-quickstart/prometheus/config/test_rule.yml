@@ -1,0 +1,8 @@
+groups:
+  - name: test-alert
+    rules:
+      - alert: HttpTestDown
+        expr: sum(up{job="test"}) == 0
+        for: 10s
+        labels:
+          severity: critical

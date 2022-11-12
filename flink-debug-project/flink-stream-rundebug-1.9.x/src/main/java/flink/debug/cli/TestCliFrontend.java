@@ -12,7 +12,14 @@ import java.util.StringJoiner;
  */
 public class TestCliFrontend {
 
-
+    /**
+     *  Window 系统 IDEA里提交 flink-yarn作业, 默认会因为 File.separator 不同导致在Window拼接的AM 的Classpath在 Linux 无法识别;
+     *   - 社区早有人提出此Issues: https://issues.apache.org/jira/browse/FLINK-20973    但社区没改;
+     *   - 这里根据issue中的加以, 用 YarnConfigOptions.APP_MASTER_VCORES 替换了相关的  File.separator
+     *   - 开启测试前, 需要 mvn install 把 flink-yarn-winfix 打到本地仓库,否则汇报 localJarPath 为空的异常;
+     *      - 参考源码 AbstractYarnClusterDescriptor.createDescriptor() 和 isReadyForDeployment() 出生成 localJarPath的源码;
+     *
+     */
 
     @Test
     public void test() {

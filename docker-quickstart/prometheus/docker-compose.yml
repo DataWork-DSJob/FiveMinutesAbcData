@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    privileged: true
+    user: root
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ./prometheus-data:/prometheus
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/test_rule.yml:/etc/prometheus/test_rule.yml

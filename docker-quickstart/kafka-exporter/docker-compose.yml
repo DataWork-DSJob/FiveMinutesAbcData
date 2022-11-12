@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  kafka_exporter_9308:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka_exporter_9308
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=192.168.51.112:9092'
+

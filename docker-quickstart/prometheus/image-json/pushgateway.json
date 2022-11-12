@@ -1,0 +1,103 @@
+[
+  {
+    "Id": "sha256:a0ebc6b7eba3bfd5fba18d1959e586f1ce55af474cd59d2b2782e5bb8f03f26c",
+    "RepoTags": [
+      "prom/pushgateway:latest"
+    ],
+    "RepoDigests": [
+      "prom/pushgateway@sha256:a684e7c830a4b19e564a93bfc3bf713e85b04ab9dfcab5633c14cbba241f9231"
+    ],
+    "Parent": "",
+    "Comment": "",
+    "Created": "2021-10-11T18:00:43.811946083Z",
+    "Container": "021b3409a2773624f8b8b4c262b61137da221368710fb1a0c9266d1a725cb145",
+    "ContainerConfig": {
+      "Hostname": "021b3409a277",
+      "Domainname": "",
+      "User": "65534",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9091/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "/bin/sh",
+        "-c",
+        "#(nop) ",
+        "ENTRYPOINT [\"/bin/pushgateway\"]"
+      ],
+      "Image": "sha256:875f885b913ee7405f80ecb7b34daa57fc4d370cb809ac95173ee54c7e35e226",
+      "Volumes": null,
+      "WorkingDir": "/pushgateway",
+      "Entrypoint": [
+        "/bin/pushgateway"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "DockerVersion": "19.03.8",
+    "Author": "",
+    "Config": {
+      "Hostname": "",
+      "Domainname": "",
+      "User": "65534",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9091/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": null,
+      "Image": "sha256:875f885b913ee7405f80ecb7b34daa57fc4d370cb809ac95173ee54c7e35e226",
+      "Volumes": null,
+      "WorkingDir": "/pushgateway",
+      "Entrypoint": [
+        "/bin/pushgateway"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 19904013,
+    "VirtualSize": 19904013,
+    "GraphDriver": {
+      "Data": {
+        "LowerDir": "/var/lib/docker/overlay2/c165e0e1894eecf944b0cb25b21adc9c83193eaf92d5c7c4e3b163b18a26e454/diff:/var/lib/docker/overlay2/99e369c7cc515ad6aa1592141ec501b514a216af15efedd14556ee0b8fbd5d40/diff:/var/lib/docker/overlay2/c6f97011a2e8a9581746498f98754a4765027190ba910ce14162c5bfe694ebc3/diff",
+        "MergedDir": "/var/lib/docker/overlay2/87cb9e26993e4a971872ac16b6d1157692180d0755ccfeadb8445b943feec7c2/merged",
+        "UpperDir": "/var/lib/docker/overlay2/87cb9e26993e4a971872ac16b6d1157692180d0755ccfeadb8445b943feec7c2/diff",
+        "WorkDir": "/var/lib/docker/overlay2/87cb9e26993e4a971872ac16b6d1157692180d0755ccfeadb8445b943feec7c2/work"
+      },
+      "Name": "overlay2"
+    },
+    "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:36b45d63da70799f32c6e82de9be2e75167099b010def8771cf847c0e4c9c975",
+        "sha256:8d42cad20cacf3df7898198075e3418f33cee8b0ea85c00ab4220fed62d66d6f",
+        "sha256:7e850f71d5d47f5e4be4735394c38efe1291682c9b1a6827bb48a7252849f7e6",
+        "sha256:3d07758d3e1e252ed2e360dc15c5836ad1066c7f8042df6c7b65eb0097c85a64"
+      ]
+    },
+    "Metadata": {
+      "LastTagTime": "0001-01-01T00:00:00Z"
+    }
+  }
+]

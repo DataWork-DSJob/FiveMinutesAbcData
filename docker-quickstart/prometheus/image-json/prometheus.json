@@ -1,0 +1,120 @@
+[
+  {
+    "Id": "sha256:a3d385fc29f926eed67f0d60ffaf72d199f3f9c24af5d55cd1802f2dc1dc9b4b",
+    "RepoTags": [
+      "prom/prometheus:latest"
+    ],
+    "RepoDigests": [
+      "prom/prometheus@sha256:cb9817249c346d6cfadebe383ed3b3cd4c540f623db40c4ca00da2ada45259bb"
+    ],
+    "Parent": "",
+    "Comment": "",
+    "Created": "2021-12-17T22:28:10.059057201Z",
+    "Container": "746a267d1414abb463a72bc754fee0a48a671e056ce0a2f368c97831864bdb1d",
+    "ContainerConfig": {
+      "Hostname": "746a267d1414",
+      "Domainname": "",
+      "User": "nobody",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9090/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "/bin/sh",
+        "-c",
+        "#(nop) ",
+        "CMD [\"--config.file=/etc/prometheus/prometheus.yml\" \"--storage.tsdb.path=/prometheus\" \"--web.console.libraries=/usr/share/prometheus/console_libraries\" \"--web.console.templates=/usr/share/prometheus/consoles\"]"
+      ],
+      "Image": "sha256:1d3541e1d00b4eccf90ba15eecff698b49d91795f65bb4c534af6d322fda3a90",
+      "Volumes": {
+        "/prometheus": {}
+      },
+      "WorkingDir": "/prometheus",
+      "Entrypoint": [
+        "/bin/prometheus"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "DockerVersion": "19.03.8",
+    "Author": "",
+    "Config": {
+      "Hostname": "",
+      "Domainname": "",
+      "User": "nobody",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9090/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.path=/prometheus",
+        "--web.console.libraries=/usr/share/prometheus/console_libraries",
+        "--web.console.templates=/usr/share/prometheus/consoles"
+      ],
+      "Image": "sha256:1d3541e1d00b4eccf90ba15eecff698b49d91795f65bb4c534af6d322fda3a90",
+      "Volumes": {
+        "/prometheus": {}
+      },
+      "WorkingDir": "/prometheus",
+      "Entrypoint": [
+        "/bin/prometheus"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 200839287,
+    "VirtualSize": 200839287,
+    "GraphDriver": {
+      "Data": {
+        "LowerDir": "/var/lib/docker/overlay2/65928620a84ae1d655aa69127875c92c86d1b4292b7509016eb47fe629ad0a4a/diff:/var/lib/docker/overlay2/f5353d9442308453804df5b0e8794dfd27eba557d7d569dbfdf8b34ddc656cf5/diff:/var/lib/docker/overlay2/c1e186da767ae2ad0a097b21f84ba3ba15f7437979a2af03b4853439a4b96376/diff:/var/lib/docker/overlay2/f177bd5d9da11532dd4ee1e22688337933d2cd176e23ffb280940470908d0536/diff:/var/lib/docker/overlay2/d88f40fa7827ebc42c0c9a8bf0b27d7b4d53d1c7239ec6ddea3ac5061c968187/diff:/var/lib/docker/overlay2/51831d354595c9cc4a34c7cb994d7ca2007a300170f1751455d843b458921df8/diff:/var/lib/docker/overlay2/a1f62b7cfcefb24150835d8a95d0afb0f0e30a8d62e9600923d0de3d6bd1ab46/diff:/var/lib/docker/overlay2/3543857af1b13a2b664229ff3798da92ca5d6dbfdb6553aa1eaf4c7382951018/diff:/var/lib/docker/overlay2/e10527b82e0e8b089f71a77a4b806bd0a0932e44bca854aa7a6061173e17f945/diff:/var/lib/docker/overlay2/c5e8ad8a2328e06317513ddddc5e6ced928387d09942067353a67178872ee848/diff:/var/lib/docker/overlay2/eadf5bcd47f62284f8ec532824f4dd9ea9bc87a467a4c50418950e0c4a12d00c/diff",
+        "MergedDir": "/var/lib/docker/overlay2/dfad6fde581896e36b52ccb1c39956acd71f9cd400d4a90c60a5bb5cb3ccc649/merged",
+        "UpperDir": "/var/lib/docker/overlay2/dfad6fde581896e36b52ccb1c39956acd71f9cd400d4a90c60a5bb5cb3ccc649/diff",
+        "WorkDir": "/var/lib/docker/overlay2/dfad6fde581896e36b52ccb1c39956acd71f9cd400d4a90c60a5bb5cb3ccc649/work"
+      },
+      "Name": "overlay2"
+    },
+    "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:64cac9eaf0da6a7ae6519b6c7198929f232324e0822b5e359ee0e27104e2d3ed",
+        "sha256:d0042e16727e4a62e9841a142751bdae4066315fba25e796423ba28a35e728c9",
+        "sha256:fab738f36e587809d2e0e348d78130bdb9c7f92a07da9229c716f901d064b7ac",
+        "sha256:f7f75c8d73f8c5d32347356c52b678c141fb92646dd35386821ad6d77388429b",
+        "sha256:a6bdb382752948d708959065dc2601b0b48f19e318e5766f7294b81f5fda0af6",
+        "sha256:f41c7b6146ac0cd0725ab0c2770c3cbfebb0f1531716e9a457f7deb9077aa829",
+        "sha256:8871563f6281bf3d0202f970e2269185e8c7170b39784ecda44d515358bf2ef1",
+        "sha256:0f55e3e49b54c6664bff14f5ffb142d686a778b08f063bf024bd5ecc23e9e8d7",
+        "sha256:a42d05078e67046ba4dfecad70dec5c1433d29586cf222a675d2de632e201c9a",
+        "sha256:2580146cddc30742d0b59b0cb4f21a56f249954f9d827fba90c76e8b13b0497a",
+        "sha256:b32b74b68133cbe8f5cd10bfb3822e29a108ae22393a8b23b332c5ad467c3ddc",
+        "sha256:a8d778387206c3d8d3d598030c78fc46cc3ab2b3578a40d21a7e0e599ee90c6d"
+      ]
+    },
+    "Metadata": {
+      "LastTagTime": "0001-01-01T00:00:00Z"
+    }
+  }
+]

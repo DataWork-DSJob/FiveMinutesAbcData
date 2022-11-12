@@ -14,7 +14,7 @@ public class FlinkStreamExample extends FlinkDebugCommon {
 
 
     @Test
-    public void runSimpleDemoJsonSource2WindowAgg2Print() throws Exception {
+    public void simpleDemoByF112() throws Exception {
         runSimpleDemoJsonSource2WindowAgg2Print(null, -1, 100000);
     }
 

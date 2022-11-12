@@ -2,9 +2,15 @@ package flink.debug;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import flink.debug.pressure.ParallismJsonStringSource;
+import flink.debug.pressure.ParallismTrashSink;
+import flink.debug.utils.CommonTestUtils;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -17,7 +23,11 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -34,6 +44,46 @@ public class FlinkDebugCommon {
         return env;
     }
 
+    public void setClasspathResourceAsJvmEnv(String envName, String flinkConfDir) {
+        URL url = getClass().getClassLoader().getResource(flinkConfDir);
+        if (null == url) {
+            throw new IllegalArgumentException("Not found in Classpath: " + envName + "="+ flinkConfDir);
+        }
+        File dir = new File(url.getPath());
+        if (!dir.exists()) {
+            throw new IllegalArgumentException("Not found in Classpath: " + envName + "="+ flinkConfDir);
+        }
+        String confDirPath = dir.getAbsolutePath();
+        Map<String, String> newEnvs = new HashMap<>();
+        newEnvs.put(envName, confDirPath);
+        CommonTestUtils.setEnv(newEnvs, false);
+        String confDir = System.getenv(envName);
+        if (null != confDir) {
+            System.out.println("Succeed set ENV: " + envName + "="+ confDir);
+        }
+
+    }
+
+    public void printFlinkEnv() {
+
+        String hadoopHome = System.getenv("HADOOP_HOME");
+        String hadoopConfDir = System.getenv("HADOOP_CONF_DIR");
+        String classpath = System.getenv("CLASSPATH");
+        String flinkHome = System.getenv("FLINK_HOME");
+        String flinkConfDir = System.getenv("FLINK_CONF_DIR");
+
+        System.out.println("HADOOP_HOME= " + hadoopHome);
+        System.out.println("HADOOP_CONF_DIR= " + hadoopConfDir);
+        System.out.println("CLASSPATH= " + classpath);
+        System.out.println("flinkHome= " + flinkHome);
+        System.out.println("flinkConfDir= " + flinkConfDir);
+
+        String hadoopConfDirKv = System.getProperty("HADOOP_CONF_DIR");
+        System.out.println("hadoopConfDirKv= " + hadoopConfDirKv);
+
+    }
+
+
     public void runSimpleDemoJsonSource2WindowAgg2Print(StreamExecutionEnvironment env, Integer batch, Integer rate) {
         if (null == env) {
             env = getStreamEnv();
@@ -47,7 +97,29 @@ public class FlinkDebugCommon {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
 
+    public void pressureTest(StreamExecutionEnvironment env) {
+        if (null == env) {
+            env = getStreamEnv();
+        }
+        DataStream<String> kafkaDataStream = env
+                .addSource(new ParallismJsonStringSource(new HashMap<>()))
+                .map(new MapFunction<JSONObject, String>() {
+                    @Override
+                    public String map(JSONObject value) throws Exception {
+                        return value.toJSONString();
+                    }
+                });
+        SingleOutputStreamOperator<String> outDS = transformString2Json2Watermark2Window(kafkaDataStream);
+        outDS.addSink(new ParallismTrashSink());
+//        outDS.print("OutPrint: ");
+        try {
+            env.execute(this.getClass().getSimpleName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -133,12 +205,20 @@ public class FlinkDebugCommon {
         }
     }
 
-    private SingleOutputStreamOperator<String> transformString2Json2Watermark2Window(DataStreamSource<String> kafkaDataStream) {
+    private SingleOutputStreamOperator<String> transformString2Json2Watermark2Window(DataStream<String> kafkaDataStream) {
         SingleOutputStreamOperator<String> outDS = kafkaDataStream
                 .map(line -> {
                     JSONObject json = JSON.parseObject(line);
                     json.put("timeMillis", System.currentTimeMillis());
                     return json;
+                })
+                .flatMap(new FlatMapFunction<JSONObject, JSONObject>() {
+                    @Override
+                    public void flatMap(JSONObject value, Collector<JSONObject> out) throws Exception {
+                        long nanoTime = System.nanoTime();
+                        value.put("Process2_flatMap", nanoTime);
+                        out.collect(value);
+                    }
                 })
                 .assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<JSONObject>(Time.seconds(5)) {
                     @Override

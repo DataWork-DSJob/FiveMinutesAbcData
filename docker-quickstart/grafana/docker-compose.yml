@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  grafana_3000:
+    image: grafana/grafana:8.3.5
+    container_name: grafana_3000
+    ports:
+      - "3000:3000"

@@ -37,6 +37,10 @@
                     <artifactId>flink-connector-kafka-0.11_2.11</artifactId>
                     <groupId>org.apache.flink</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>flink-yarn_2.11</artifactId>
+                    <groupId>org.apache.flink</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -70,7 +74,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-yarn_${scala.binary.version}</artifactId>
+            <artifactId>flink-yarn-winfix_${scala.binary.version}</artifactId>
+            <!--<artifactId>flink-yarn_${scala.binary.version}</artifactId>-->
             <version>${flink.version}</version>
             <exclusions>
                 <exclusion>

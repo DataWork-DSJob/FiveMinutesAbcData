@@ -1,0 +1,15 @@
+
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'victoriametrics'
+    static_configs:
+      - targets: ['localhost:8428']
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka_exporter_vm:9308']
+        labels:
+          instance: 'kafka@192.168.51.112:9092'
+
+
+

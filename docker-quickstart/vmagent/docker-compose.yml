@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  vmagent_8429:
+    image: victoriametrics/vmagent
+    container_name: vmagent_8429
+    ports:
+      - "8429:8429"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus.yml
+    command:
+      - '-promscrape.config=/etc/prometheus.yml'
+      - '-remoteWrite.url=https://192.168.110.78:8428/api/v1/write'

@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    privileged: true
+    user: root
+    ports:
+      - "9090:9090"
+    networks:
+      - prom
+    volumes:
+      - prometheus-data:/prometheus
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/test_rule.yml:/etc/prometheus/test_rule.yml
+  pushgateway:
+    image: prom/pushgateway
+    container_name: pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - prom
+    volumes:
+      - ./pushgateway:/pushgateway
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    privileged: true
+    user: root
+    ports:
+      - "9093:9093"
+    networks:
+      - prom
+    volumes:
+      - alertmanager-data:/alertmanager
+      - ./config/alertmager/alertmanager.yml
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - prom
+    volumes:
+      - '/proc:/host/proc:ro'
+      - '/sys:/host/sys:ro'
+      - '/:/rootfs:ro'
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - prom
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+networks:
+  prom:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+  grafana-data:
+

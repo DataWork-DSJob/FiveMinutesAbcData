@@ -1,0 +1,112 @@
+[
+  {
+    "Id": "sha256:ba2b418f427c0636d654de8757e830c80168e76482bcc46bb2138e569d6c91d4",
+    "RepoTags": [
+      "prom/alertmanager:latest"
+    ],
+    "RepoDigests": [
+      "prom/alertmanager@sha256:9ab73a421b65b80be072f96a88df756fc5b52a1bc8d983537b8ec5be8b624c5a"
+    ],
+    "Parent": "",
+    "Comment": "",
+    "Created": "2021-08-25T11:18:39.173490704Z",
+    "Container": "8c47d6cfa4f49d5f29fba42c8441cb6f7c41dda316bd0ddf7be6e09070abdeea",
+    "ContainerConfig": {
+      "Hostname": "8c47d6cfa4f4",
+      "Domainname": "",
+      "User": "nobody",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9093/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "/bin/sh",
+        "-c",
+        "#(nop) ",
+        "CMD [\"--config.file=/etc/alertmanager/alertmanager.yml\" \"--storage.path=/alertmanager\"]"
+      ],
+      "Image": "sha256:aee0d06caff212d852a839419584baed92ec26840219a8bca889145e8b7c3156",
+      "Volumes": {
+        "/alertmanager": {}
+      },
+      "WorkingDir": "/alertmanager",
+      "Entrypoint": [
+        "/bin/alertmanager"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "DockerVersion": "19.03.8",
+    "Author": "",
+    "Config": {
+      "Hostname": "",
+      "Domainname": "",
+      "User": "nobody",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "9093/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "--config.file=/etc/alertmanager/alertmanager.yml",
+        "--storage.path=/alertmanager"
+      ],
+      "Image": "sha256:aee0d06caff212d852a839419584baed92ec26840219a8bca889145e8b7c3156",
+      "Volumes": {
+        "/alertmanager": {}
+      },
+      "WorkingDir": "/alertmanager",
+      "Entrypoint": [
+        "/bin/alertmanager"
+      ],
+      "OnBuild": null,
+      "Labels": {
+        "maintainer": "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+      }
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 57534389,
+    "VirtualSize": 57534389,
+    "GraphDriver": {
+      "Data": {
+        "LowerDir": "/var/lib/docker/overlay2/db46e645da14885f26baa9d739029cc491435451d5062c0a92a77da62045497a/diff:/var/lib/docker/overlay2/6fc7dcb7a59dbb725a7a8af194cbd7e48cdd639899373fca4a7bb61725ef1dca/diff:/var/lib/docker/overlay2/5ff49f510cd25809c695a16b79f2b0569281e1f7d718ca248bd1f3633c6eb82e/diff:/var/lib/docker/overlay2/99e369c7cc515ad6aa1592141ec501b514a216af15efedd14556ee0b8fbd5d40/diff:/var/lib/docker/overlay2/c6f97011a2e8a9581746498f98754a4765027190ba910ce14162c5bfe694ebc3/diff",
+        "MergedDir": "/var/lib/docker/overlay2/c9bd4c13dd52cf512083f86a264c2884f8fba5d78034ff64fe9edbf68e785d47/merged",
+        "UpperDir": "/var/lib/docker/overlay2/c9bd4c13dd52cf512083f86a264c2884f8fba5d78034ff64fe9edbf68e785d47/diff",
+        "WorkDir": "/var/lib/docker/overlay2/c9bd4c13dd52cf512083f86a264c2884f8fba5d78034ff64fe9edbf68e785d47/work"
+      },
+      "Name": "overlay2"
+    },
+    "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:36b45d63da70799f32c6e82de9be2e75167099b010def8771cf847c0e4c9c975",
+        "sha256:8d42cad20cacf3df7898198075e3418f33cee8b0ea85c00ab4220fed62d66d6f",
+        "sha256:03be2890f93fda400485fcdadba6b2933b02562b2adbfebe8bff93abcfff8017",
+        "sha256:b1ea1aec9c1d23f8cdb3add0c9fb628369e5b13f3d647d3abc74a4c34f0e00a9",
+        "sha256:5461fabdcb43d883c8115b0b804e734b8ccde3ea60c67940578aef9e16e2f51f",
+        "sha256:ebf9953234bfdb4de523b3f8adb9270df5aa65e09abf717de4ee25a73e5f5fef"
+      ]
+    },
+    "Metadata": {
+      "LastTagTime": "0001-01-01T00:00:00Z"
+    }
+  }
+]

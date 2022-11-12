@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  victoriametrics_vm_8428:
+    image: victoriametrics/victoria-metrics
+    container_name: victoriametrics_vm_8428
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./vm-data:/victoria-metrics-data
+      - ./victoriametrics:/victoriametrics
+      - ./prometheus.yml:/etc/prometheus.yml
+    command:
+      - '-promscrape.config=/etc/prometheus.yml'
+      - '-retentionPeriod=30d'
+
+  grafana_vm_3000:
+    image: grafana/grafana:8.3.5
+    container_name: grafana_vm_3000
+    ports:
+      - "3000:3000"
+
+  kafka_exporter_vm_9308:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka_exporter_vm_9308
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=192.168.51.112:9092'
