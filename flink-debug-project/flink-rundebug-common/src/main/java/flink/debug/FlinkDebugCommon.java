@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import flink.debug.pressure.ParallismJsonStringSource;
 import flink.debug.pressure.ParallismTrashSink;
 import flink.debug.utils.CommonTestUtils;
+import flink.debug.utils.DebugCommMethod;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -25,14 +26,10 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
-public class FlinkDebugCommon {
+public class FlinkDebugCommon extends DebugCommMethod {
 
     protected StreamExecutionEnvironment getStreamEnv() {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -54,12 +51,12 @@ public class FlinkDebugCommon {
             throw new IllegalArgumentException("Not found in Classpath: " + envName + "="+ flinkConfDir);
         }
         String confDirPath = dir.getAbsolutePath();
-        Map<String, String> newEnvs = new HashMap<>();
+        Map<String, String> newEnvs = new HashMap(2);
         newEnvs.put(envName, confDirPath);
         CommonTestUtils.setEnv(newEnvs, false);
         String confDir = System.getenv(envName);
         if (null != confDir) {
-            System.out.println("Succeed set ENV: " + envName + "="+ confDir);
+            System.out.println("Succeed set ENV: " + envName + "=" + confDir);
         }
 
     }
@@ -83,7 +80,6 @@ public class FlinkDebugCommon {
 
     }
 
-
     public void runSimpleDemoJsonSource2WindowAgg2Print(StreamExecutionEnvironment env, Integer batch, Integer rate) {
         if (null == env) {
             env = getStreamEnv();
@@ -104,7 +100,7 @@ public class FlinkDebugCommon {
             env = getStreamEnv();
         }
         DataStream<String> kafkaDataStream = env
-                .addSource(new ParallismJsonStringSource(new HashMap<>()))
+                .addSource(new ParallismJsonStringSource(null))
                 .map(new MapFunction<JSONObject, String>() {
                     @Override
                     public String map(JSONObject value) throws Exception {

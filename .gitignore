@@ -32,3 +32,7 @@ testData
 testData/*
 *dependency-reduced-pom.xml
 
+checkpoint-rocksdb
+checkpoint-rocksdb/*
+checkpoint-*
+checkpoint-*/*
