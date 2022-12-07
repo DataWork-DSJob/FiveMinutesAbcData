@@ -28,7 +28,7 @@
 
     <modules>
         <module>flink-rundebug-common</module>
-        <!--<module>flink-stream-rundebug-1.9.x</module>-->
+<!--        <module>flink-stream-rundebug-1.9.x</module>-->
         <module>flink-stream-rundebug-1.12x</module>
         <!--<module>flink-yarn-winfix</module>-->
 

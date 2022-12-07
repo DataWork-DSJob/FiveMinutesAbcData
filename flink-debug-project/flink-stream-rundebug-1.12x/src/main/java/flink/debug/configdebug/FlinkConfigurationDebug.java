@@ -22,9 +22,9 @@ public class FlinkConfigurationDebug extends FlinkDebugCommon {
 
 
     @Test
-    public void testReuseObject() throws Exception {
+    public void testReuseObjectByF112() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        env.setParallelism(2);h
+        env.setParallelism(1);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         ExecutionConfig config = env.getConfig();
         /**

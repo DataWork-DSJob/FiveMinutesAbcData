@@ -67,32 +67,29 @@ new OperatorChain<>(this, recordWriters);{
 			RecordWriterOutput<T> output = (RecordWriterOutput<T>) streamOutputs.get(outputEdge);
 			allOutputs.add(new Tuple2<>(output, outputEdge));
 		}
+		
 		// Create collectors for the chained outputs; 同一Task中,可以chained一起的算子; 创建Output类包装; 
 		for (StreamEdge outputEdge : operatorConfig.getChainedOutputs(userCodeClassloader)) {
-			WatermarkGaugeExposingOutput<StreamRecord<T>> output = createChainedOperator();{//OperatorChain.createChainedOperator()
-				// 递归调用, 
+			// Recursively create chain of operators that starts from the given . 递归创建Chain 
+			WatermarkGaugeExposingOutput<StreamRecord<T>> output = createOperatorChain(containingTask,allOperatorWrappers);{//OperatorChain.createOperatorChain()
+				
+				// create the output that the operator writes to first. this may recursively create more
+				// 递归, 
 				WatermarkGaugeExposingOutput<StreamRecord<OUT>> chainedOperatorOutput = createOutputCollector();
 				
-				// now create the operator and give it the output collector to write its output to; 创建 Operator 
-				StreamOperatorFactory<OUT> chainedOperatorFactory = operatorConfig.getStreamOperatorFactory(userCodeClassloader);
-				OneInputStreamOperator<IN, OUT> chainedOperator = chainedOperatorFactory.createStreamOperator(containingTask, operatorConfig, chainedOperatorOutput);
-				allOperators.add(chainedOperator);
+				OneInputStreamOperator<IN, OUT> chainedOperator = createOperator();
 				
-				// 对象复用的关键代码: 根据 reuseEnable=true/false, 是否提供CopyingChainingOutput 深拷贝包装类; 默认false 都要深拷贝;
-				// objectReuseEnabled 有参数object-reuse-mode控制, 默认=false; 
-				if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
-					currentOperatorOutput = new ChainingOutput<>(chainedOperator, this, outputTag);
+				// 递归完了, 这里创建和包装具体的 算子对象, 就是跟进是否 objectReuse复用,创建 ChainingOutput 还是深拷贝的 CopyingChainingOutput
+				return wrapOperatorIntoOutput(chainedOperator, containingTask, operatorConfig, userCodeClassloader, outputTag); {
+					if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
+						currentOperatorOutput = new ChainingOutput<>(operator, this, outputTag);
+					} else {
+						TypeSerializer<IN> inSerializer =
+								operatorConfig.getTypeSerializerIn1(userCodeClassloader);
+						currentOperatorOutput = new CopyingChainingOutput<>(operator, inSerializer, outputTag, this);
+					}
+					return currentOperatorOutput;
 				}
-				else {
-					TypeSerializer<IN> inSerializer = operatorConfig.getTypeSerializerIn1(userCodeClassloader);
-					currentOperatorOutput = new CopyingChainingOutput<>(chainedOperator, inSerializer, outputTag, this);
-				}
-				
-				// wrap watermark gauges since registered metrics must be unique
-				chainedOperator.getMetricGroup().gauge(MetricNames.IO_CURRENT_INPUT_WATERMARK, currentOperatorOutput.getWatermarkGauge()::getValue);
-				chainedOperator.getMetricGroup().gauge(MetricNames.IO_CURRENT_OUTPUT_WATERMARK, chainedOperatorOutput.getWatermarkGauge()::getValue);
-				
-				return currentOperatorOutput;
 			}
 			allOutputs.add(new Tuple2<>(output, outputEdge));
 		}
@@ -104,39 +101,24 @@ new OperatorChain<>(this, recordWriters);{
 			return selectors == null ? Collections.<OutputSelector<T>>emptyList() : selectors;
 		}
 		
-		if (selectors == null || selectors.isEmpty()) {// 接1个输出,简单路径
-			// simple path, no selector necessary; 
-			if (allOutputs.size() == 1) { // 窗口是,allOutputs.size=0, 为什么? 
-				return allOutputs.get(0).f0;
-			} else {
-				// This is the inverse of creating the normal ChainingOutput.
-				// If the chaining output does not copy we need to copy in the broadcast output, otherwise multi-chaining would not work correctly.
-				// 和正常 相反(这里是shuffle), 如果没复用的胡
-				// 如果启用了 reuseObj, 说明前面对象是可能重用冲突, 这里输出 broadcasting前要copy一下; 
-				if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
-					return new CopyingBroadcastingOutputCollector<>(asArray, this);
-				} else  {
-					// 如果没用启用reuseObj,则对象是安全的, 这里之间 broadcast了; 
-					return new BroadcastingOutputCollector<>(asArray, this);
-				}
-			}
+		// simple path, no selector necessary; 
+		if (allOutputs.size() == 1) { // 窗口是,allOutputs.size=0, 为什么? 
+			return allOutputs.get(0).f0;
 		} else {
 			// This is the inverse of creating the normal ChainingOutput.
 			// If the chaining output does not copy we need to copy in the broadcast output, otherwise multi-chaining would not work correctly.
+			// 和正常 相反(这里是shuffle), 如果没复用的胡
+			// 如果启用了 reuseObj, 说明前面对象是可能重用冲突, 这里输出 broadcasting前要copy一下; 
 			if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
-				return new CopyingDirectedOutput<>(selectors, allOutputs);
-			} else {
-				return new DirectedOutput<>(selectors, allOutputs);
+				return new CopyingBroadcastingOutputCollector<>(asArray, this);
+			} else  {
+				// 如果没用启用reuseObj,则对象是安全的, 这里之间 broadcast了; 
+				return new BroadcastingOutputCollector<>(asArray, this);
 			}
 		}
 		
 	}
 	
-	WatermarkGaugeExposingOutput<StreamRecord<OUT>> output = getChainEntryPoint();
-	headOperator = operatorFactory.createStreamOperator(containingTask, configuration, output);
-	headOperator.getMetricGroup().gauge(MetricNames.IO_CURRENT_OUTPUT_WATERMARK, output.getWatermarkGauge());
-	
-	this.allOperators = allOps.toArray(new StreamOperator<?>[allOps.size()]);
 	success = true;
 }
 
