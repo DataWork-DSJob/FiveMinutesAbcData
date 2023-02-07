@@ -15,7 +15,7 @@ services:
       - '-retentionPeriod=30d'
 
   grafana_vm_3000:
-    image: grafana/grafana:8.3.5
+    image: grafana/grafana:9.1.5
     container_name: grafana_vm_3000
     ports:
       - "3000:3000"
@@ -37,4 +37,15 @@ services:
     ports:
       - "9308:9308"
     command:
-      - '--kafka.server=192.168.51.112:9092'
+      - '--kafka.server=${KAFKA_AD_IP}:9092'
+
+  jmx_exporter_vm_9099:
+    image: bitnami/jmx-exporter:0.16.1
+    container_name: jmx_exporter_vm_9099
+    ports:
+      - "9099:9099"
+    volumes:
+      - ./jmx_config.yml:/etc/jmx_config.yml
+    command:
+      - '9099'
+      - '/etc/jmx_config.yml'

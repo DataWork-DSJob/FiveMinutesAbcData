@@ -18,4 +18,9 @@ scrape_configs:
           host: 'node_exporter_vm_9100'
           ipAddress: '192.168.51.102'
 
+  - job_name: 'kafka_jmx'
+    static_configs:
+      - targets: ['jmx_exporter_vm_9099:9099']
+        labels:
+          instance: 'kafka@192.168.51.102:9092'
 

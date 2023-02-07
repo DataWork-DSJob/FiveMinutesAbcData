@@ -3,9 +3,11 @@ package flink.debug;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import flink.debug.pressure.ParallismJsonStringSource;
-import flink.debug.pressure.ParallismTrashSink;
+import flink.debug.pressure.TrashSink;
 import flink.debug.utils.CommonTestUtils;
 import flink.debug.utils.DebugCommMethod;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -108,7 +110,50 @@ public class FlinkDebugCommon extends DebugCommMethod {
                     }
                 });
         SingleOutputStreamOperator<String> outDS = transformString2Json2Watermark2Window(kafkaDataStream);
-        outDS.addSink(new ParallismTrashSink());
+        outDS.addSink(new TrashSink());
+//        outDS.print("OutPrint: ");
+        try {
+            env.execute(this.getClass().getSimpleName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    class PodInfo {
+        String hostname;
+        String ip;
+        Long opTime;
+    }
+
+    public void testFlinkFunctions(StreamExecutionEnvironment env) {
+        if (null == env) {
+            env = getStreamEnv();
+        }
+        DataStream<String> stressSource = env
+                .addSource(new ParallismJsonStringSource(null))
+                .map(new MapFunction<JSONObject, String>() {
+                    @Override
+                    public String map(JSONObject value) throws Exception {
+                        return value.toJSONString();
+                    }
+                });
+
+        SingleOutputStreamOperator<PodInfo> dimDStream = env.fromElements(
+                        new PodInfo("hadoop01", "192.168.110.11", 0L),
+                        new PodInfo("hadoop01", "192.168.110.11", 0L)
+                )
+                .flatMap((p, c) -> {
+                    p.setOpTime(System.nanoTime());
+                    c.collect(p);
+                });
+
+
+
+        SingleOutputStreamOperator<String> outDS = transformFlinkAllFunctions(stressSource);
+        outDS.addSink(new TrashSink());
 //        outDS.print("OutPrint: ");
         try {
             env.execute(this.getClass().getSimpleName());
@@ -202,7 +247,7 @@ public class FlinkDebugCommon extends DebugCommMethod {
     }
 
     private SingleOutputStreamOperator<String> transformString2Json2Watermark2Window(DataStream<String> kafkaDataStream) {
-        SingleOutputStreamOperator<String> outDS = kafkaDataStream
+        SingleOutputStreamOperator<JSONObject> jsonObjDStream = kafkaDataStream
                 .map(line -> {
                     JSONObject json = JSON.parseObject(line);
                     json.put("timeMillis", System.currentTimeMillis());
@@ -215,7 +260,66 @@ public class FlinkDebugCommon extends DebugCommMethod {
                         value.put("Process2_flatMap", nanoTime);
                         out.collect(value);
                     }
+                });
+
+        jsonObjDStream.map(json -> {
+            return json.toJSONString();
+        }).addSink(new TrashSink<>());
+
+        SingleOutputStreamOperator<String> outDS = jsonObjDStream
+                .assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<JSONObject>(Time.seconds(5)) {
+                    @Override
+                    public long extractTimestamp(JSONObject element) {
+                        Long timeMillis = element.getLong("timeMillis");
+                        if (null == timeMillis) {
+                            timeMillis = System.currentTimeMillis();
+                        }
+                        return timeMillis;
+                    }
                 })
+                .map(json -> {
+                    json.put("tid", Thread.currentThread().getId());
+                    String key;
+                    double random = Math.random();
+                    if (random > 0.7) {
+                        key = "Key_1";
+                    } else if (random > 0.3) {
+                        key = "Key_2";
+                    } else {
+                        key = "Key_3";
+                    }
+                    json.put("groupKey", key);
+                    return json;
+                })
+                .keyBy(new MyKeySelector())
+                .timeWindow(Time.seconds(3))
+                .process(new MyJsonProcWindow())
+                .map(k -> k.toJSONString());
+        return outDS;
+    }
+
+    private SingleOutputStreamOperator<String> transformFlinkAllFunctions(DataStream<String> kafkaDataStream) {
+
+        SingleOutputStreamOperator<JSONObject> jsonObjDStream = kafkaDataStream
+                .map(line -> {
+                    JSONObject json = JSON.parseObject(line);
+                    json.put("timeMillis", System.currentTimeMillis());
+                    return json;
+                })
+                .flatMap(new FlatMapFunction<JSONObject, JSONObject>() {
+                    @Override
+                    public void flatMap(JSONObject value, Collector<JSONObject> out) throws Exception {
+                        long nanoTime = System.nanoTime();
+                        value.put("Process2_flatMap", nanoTime);
+                        out.collect(value);
+                    }
+                });
+
+        jsonObjDStream.map(json -> {
+            return json.toJSONString();
+        }).print("中间jsonObjDStream 并列map打印: ");
+
+        SingleOutputStreamOperator<String> outDS = jsonObjDStream
                 .assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<JSONObject>(Time.seconds(5)) {
                     @Override
                     public long extractTimestamp(JSONObject element) {

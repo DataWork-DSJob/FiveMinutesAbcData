@@ -15,7 +15,7 @@ services:
       - '-retentionPeriod=30d'
 
   grafana_vm_3000:
-    image: grafana/grafana:8.3.5
+    image: grafana/grafana:9.1.5
     container_name: grafana_vm_3000
     ports:
       - "3000:3000"

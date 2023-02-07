@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  pushgateway:
+    image: prom/pushgateway
+    container_name: pushgateway
+    user: root
+    ports:
+      - "9091:9091"
+
+    volumes:
+      - ./pushgateway_data:/var/lib/pushgateway

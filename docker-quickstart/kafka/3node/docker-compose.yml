@@ -17,6 +17,7 @@ services:
     container_name: kafka_kc_1
     ports:
       - 9092:9092
+      - 40991:40991
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zk_kc_1:2181
@@ -26,6 +27,8 @@ services:
       KAFKA_LOG_CLEANUP_POLICY: "delete"
       KAFKA_LOG_RETENTION_MS: 600000  # 10分钟删除
       KAFKA_CREATE_TOPICS: testSourceTopic:4:1,testSinkTopic:2:1 # 启动创建2个测试Topic
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${KAFKA_AD_IP} -Dcom.sun.management.jmxremote.rmi.port=40991"  # 导入KAFKA_JMX_OPTS环境变量
+      JMX_PORT: 40991  # 导入JMX_PORT环境变量
     volumes:
       - ./data/kafka_kc_1:/data/kafka-data
     restart: unless-stopped
@@ -36,6 +39,7 @@ services:
     container_name: kafka_kc_2
     ports:
       - 9093:9093
+      - 40992:40992
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zk_kc_1:2181
@@ -44,6 +48,8 @@ services:
       KAFKA_LOG_DIRS: /data/kafka-data
       KAFKA_LOG_CLEANUP_POLICY: "delete"
       KAFKA_LOG_RETENTION_MS: 600000  # 10分钟删除
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${KAFKA_AD_IP} -Dcom.sun.management.jmxremote.rmi.port=40992"  # 导入KAFKA_JMX_OPTS环境变量
+      JMX_PORT: 40992  # 导入JMX_PORT环境变量
     volumes:
       - ./data/kafka_kc_2:/data/kafka-data
     restart: unless-stopped
@@ -54,6 +60,7 @@ services:
     container_name: kafka_kc_3
     ports:
       - 9094:9094
+      - 40993:40993
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zk_kc_1:2181
@@ -62,6 +69,8 @@ services:
       KAFKA_LOG_DIRS: /data/kafka-data
       KAFKA_LOG_CLEANUP_POLICY: "delete"
       KAFKA_LOG_RETENTION_MS: 600000  # 10分钟删除
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${KAFKA_AD_IP} -Dcom.sun.management.jmxremote.rmi.port=40993"  # 导入KAFKA_JMX_OPTS环境变量
+      JMX_PORT: 40993  # 导入JMX_PORT环境变量
     volumes:
       - ./data/kafka_kc_3:/data/kafka-data
     restart: unless-stopped

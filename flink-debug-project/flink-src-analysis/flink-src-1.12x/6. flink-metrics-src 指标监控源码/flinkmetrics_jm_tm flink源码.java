@@ -67,14 +67,37 @@ MiniCluster.start(){
 
 
 
-
 /** JobManager 进程中的 Metrics初始化
  *
  *
  */
 
 new JobMaster(){
-	this.schedulerNG = createScheduler(jobManagerJobMetricGroup);
+	this.jobManagerJobMetricGroup = jobMetricGroupFactory.create(jobGraph);{//DefaultJobManagerJobMetricGroupFactory.
+		return jobManagerMetricGroup.addJob(jobGraph);{
+			JobID jobId = job.getJobID();
+			String jobName = job.getName();
+			currentJobGroup = jobs.get(jobId);
+			if (currentJobGroup == null || currentJobGroup.isClosed()) {
+				currentJobGroup = new JobManagerJobMetricGroup(registry, this, jobId, jobName);
+				jobs.put(jobId, currentJobGroup);
+			}
+			return currentJobGroup;
+		}
+	}
+	this.schedulerNG = createScheduler(jobManagerJobMetricGroup);{
+		return schedulerNGFactory.createInstance();{
+			
+			DefaultSchedulerFactory.createInstance(){
+				return new DefaultScheduler(){
+					super();{// new SchedulerBase()
+						
+					}
+				}
+			}
+			
+		}
+	}
 		- return new LegacyScheduler();
 			- ExecutionGraph newExecutionGraph = createExecutionGraph(currentJobManagerJobMetricGroup, shuffleMaster, partitionTracker);
 				- return ExecutionGraphBuilder.buildGraph();{//ExecutionGraphBuilder.buildGraph()
@@ -93,6 +116,14 @@ new JobMaster(){
 							metricGroup.gauge(LATEST_COMPLETED_CHECKPOINT_EXTERNAL_PATH_METRIC, new LatestCompletedCheckpointExternalPathGauge());
 						}
 					}
+					
+					// create all the metrics for the Execution Graph
+					metrics.gauge(RestartTimeGauge.METRIC_NAME, new RestartTimeGauge(executionGraph));
+					metrics.gauge(DownTimeGauge.METRIC_NAME, new DownTimeGauge(executionGraph));
+					metrics.gauge(UpTimeGauge.METRIC_NAME, new UpTimeGauge(executionGraph));
+					executionGraph.getFailoverStrategy().registerMetrics(metrics);
+					return executionGraph;
+					
 				}
 				
 }
@@ -116,6 +147,55 @@ ResourceManager.onStart(){
 	// 另外, JobManager初始化时, 也会注册
 	 MetricUtils.instantiateJobManagerMetricGroup();
 	
+
+
+/** TaskManager进程种, 注册Metrics
+* - 包括TM进程启动时, 注册JVM级别的监控
+* - 包括TM 提交task时, 注册Task/Job级别的 metrics 
+*/
+
+
+// TM进程启动时 
+
+
+// TM进程提交单个Task时 
+TaskExecutor.submitTask(TaskDeploymentDescriptor,JobMasterId){
+	
+	jobInformation = tdd.getSerializedJobInformation()
+                                .deserializeValue(getClass().getClassLoader());
+	
+	taskInformation = tdd.getSerializedTaskInformation()
+                                .deserializeValue(getClass().getClassLoader());
+	TaskMetricGroup taskMetricGroup = taskManagerMetricGroup.addTaskForJob();
+	
+	Task task = new Task();{
+        this.inputGates = new IndexedInputGate[gates.length];
+        int counter = 0;
+        for (IndexedInputGate gate : gates) {
+            inputGates[counter++] = new InputGateWithMetrics( gate, metrics.getIOMetricGroup().getNumBytesInCounter());
+        }
+		
+		((NettyShuffleEnvironment) shuffleEnvironment).registerLegacyNetworkMetrics(
+                            metrics.getIOMetricGroup(), resultPartitionWriters, gates);{
+			NettyShuffleMetricFactory.registerLegacyNetworkMetrics(metricGroup, producedPartitions, inputGates);{
+				// add metrics for buffers
+				final MetricGroup buffersGroup = metricGroup.addGroup(METRIC_GROUP_BUFFERS_DEPRECATED);
+				
+				// similar to MetricUtils.instantiateNetworkMetrics() but inside this IOMetricGroup
+				// (metricGroup)
+				final MetricGroup networkGroup = metricGroup.addGroup(METRIC_GROUP_NETWORK_DEPRECATED);
+				final MetricGroup outputGroup = networkGroup.addGroup(METRIC_GROUP_OUTPUT);
+				final MetricGroup inputGroup = networkGroup.addGroup(METRIC_GROUP_INPUT);
+			}
+		}
+							
+	}
+	taskMetricGroup.gauge(MetricNames.IS_BACKPRESSURED, task::isBackPressured);
+}
+
+
+
+
 
 
 
@@ -279,6 +359,11 @@ AbstractMetricGroup.addMetric(String name, Metric metric)
 }
 
 
+// 定时上报 reporter线程, 默认每个10秒上报一次;
+
+MetricRegistryImpl.ReporterTask() {
+	reporter.report();
+}
 
 
 

@@ -188,3 +188,111 @@ Task.run(){
 	}
 
 
+
+
+
+// flink_1.12_src: side_output 
+/** 
+* 对象重用情况下的, 测流输出的源码; 
+* 测流输出时, 通过Collect.out(), Context.output() 2个不同接口往后输出; 
+* 输出对象,即下游接收对象, 故而会发生同一对象不安全问题; 
+* 
+*/
+
+
+ProcessFunction.processElement(IN value, Context ctx, Collector<OUT> out) {
+	// 一般是带时间戳的输出; 主输出通道不会处理(往后传送)测流数据; 
+	out.collect(value);{//TimestampedCollector.collect()
+		// 转换成StreamRecord对象, 这里替换下值, 不新建StreamRecord;
+		StreamRecord<OUT> streamRecord = reuse.replace(record);{//StreamRecord.replace(element)
+			this.value = (T) element;
+			return (StreamRecord<X>) this;
+		}
+		output.collect(streamRecord);{//CountingOutput.collect()
+			// CopyingBroadcasting:  performs a shallow copy of the StreamRecord to ensure that multi-chaining works correctly
+			// 会进行浅copy:  仅仅把StreamRecord包装对象换一下; 
+			output.collect(record);{//CopyingBroadcastingOutputCollector.collect()
+				// 这里最后一个output不遍历, 因为最后一个 OutputTag的, 其通过ctx.output(outSide, value) 往后走;
+				for (int i = 0; i < outputs.length - 1; i++) {
+					Output<StreamRecord<T>> output = outputs[i];
+					// Creates a copy of this stream record. Uses the copied value as the value for the new record, i.e., only copies timestamp fields.
+					// 包装(对象)换一个, T:value 对象不变, 换汤不换药; 
+					StreamRecord<T> shallowCopy = record.copy(record.getValue());{//StreamRecord.copy(T valueCopy)
+						StreamRecord<T> copy = new StreamRecord<>(valueCopy);
+						copy.timestamp = this.timestamp;
+						copy.hasTimestamp = this.hasTimestamp;
+						return copy;
+					}
+					
+					// 这里向下游输出; 
+					output.collect(shallowCopy);{//ChainingOutput.collect()
+						pushToOperator(record);
+							input.processElement(castRecord);
+								MyMapFunc.map();
+					}
+				}
+				
+				// 这个 CopyingBroadcastingOutputCollector挺奇怪的; 因为有 outputTag不为空 就又不输出了; 
+				// don't copy for the last output
+				outputs[outputs.length - 1].collect(record);{//ChainingOutput
+					if (this.outputTag != null) {
+						// we are not responsible for emitting to the main output.
+						return;
+					}
+				}
+				
+			}
+		}
+	}
+	
+	// 测流数据, 走这边; 
+	ctx.output(outSide, value);{ // ProcessOperator$ContextImpl.output()
+		if (outputTag == null) { throw new IllegalArgumentException("OutputTag must not be null.");}
+		output.collect(outputTag, new StreamRecord<>(value, element.getTimestamp())); {
+			// 注意这个是带OutputTag入参的接口,  Output.collect(outputTag, record)
+			output.collect(outputTag, record);{//CopyingBroadcastingOutputCollector.collect(OutputTag<X> outputTag, StreamRecord<X> record)
+				// 对于 OutputTag, 这个for里不会往后输出; 
+				for (int i = 0; i < outputs.length - 1; i++) {
+					Output<StreamRecord<T>> output = outputs[i];
+					StreamRecord<X> shallowCopy = record.copy(record.getValue());
+					output.collect(outputTag, shallowCopy);{//ChainingOutput.collect(outputTag, record)
+						// 若该 output.outputTag 为空或者不等于 传入得tag,则不输出;
+						if (OutputTag.isResponsibleFor(this.outputTag, outputTag){
+							return other.equals(owner);
+						}) {
+							pushToOperator(record);
+						}
+					}
+				}
+				// OutputTag测流, 要在这里输出; 
+				if (outputs.length > 0) {
+					// don't copy for the last output
+					outputs[outputs.length - 1].collect(outputTag, record);{
+						if (OutputTag.isResponsibleFor(this.outputTag, outputTag)) {
+							pushToOperator(record);
+								input.processElement(castRecord);
+									MyMapFunc.map();
+						}
+					}
+				}
+		
+			}
+		}
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

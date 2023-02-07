@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  jmx_exporter:
+    image: bitnami/jmx-exporter:0.16.1
+    container_name: jmx_exporter
+    ports:
+      - "39099:39099"
+    volumes:
+      - ./jmx_config.yml:/etc/jmx_config.yml
+    command:
+      - '39099'
+      - '/etc/jmx_config.yml'
+

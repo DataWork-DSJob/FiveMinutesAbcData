@@ -1,0 +1,47 @@
+version: "3"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - 32181:2181
+    volumes:
+      - ./data/zookeeper/data:/data
+      - ./data/zookeeper/datalog:/datalog
+      - ./data/zookeeper/logs:/logs
+  kafka:
+    image: wurstmeister/kafka
+    depends_on:
+      - zookeeper
+    container_name: kafka
+    # 对外暴露JMX_PORT: 9999
+    ports:
+      - 9092:9092
+      - 40991:40991
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # 需要设置环境变量:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_AD_IP}:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_LOG_DIRS: /data/kafka-data
+      KAFKA_LOG_CLEANUP_POLICY: "delete"
+      KAFKA_LOG_RETENTION_MS: 600000  # 10分钟删除
+      KAFKA_CREATE_TOPICS: testSourceTopic:4:1,testSinkTopic:2:1 # 启动创建2个测试Topic
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${KAFKA_AD_IP} -Dcom.sun.management.jmxremote.rmi.port=40991"  # 导入KAFKA_JMX_OPTS环境变量
+      JMX_PORT: 40991  # 导入JMX_PORT环境变量
+    volumes:
+      - ./data/kafka:/data/kafka-data
+    restart: unless-stopped
+  kafka_manager:
+    image: sheepkiller/kafka-manager
+    command: -Dpidfile.path=/dev/null
+    container_name: kafka_manager
+    depends_on:
+      - zookeeper
+    ports:
+      - 39000:9000
+    environment:
+      ZK_HOSTS: zookeeper:2181
+
+
