@@ -145,11 +145,21 @@ Full-Out-Join: 左表新数据 + 右表新数据 + 左表匹配的历史数据 +
 Interval Join 可以让一条流去 Join 另一条流中前后一段时间内的数据
 Interval Join 可用于消灭回撤流的。?
 Time-Windowed Join 利用窗口给两个输入表设定一个 Join 的时间界限，超出时间范围的数据则对 JOIN 不可见并可以被清理掉。
-
+关于Time-Windowed-Join, 
+* 给两个输入表设置时间界限, 超出范围(过期)数据就可用丢弃而不参与Join; 
+* 可用是ProcessTime或EventTime, 系统时间就自动划分 Join 的时间窗口并定时清理数据; EventTime基于水位;
+* compared to the regular join, interval join only supports append-only tables with time attributes. 
+* Since time attributes are quasi-monotonic increasing, Flink can remove old values from its state without affecting the correctness of the result.
+* 实时 Interval Join 可以不是 等值 join。等值 join 和 非等值 join 区别在于，等值 join 数据 shuffle 策略是 Hash，会按照 Join on 中的等值条件作为 id 发往对应的下游；
+* 非等值 join 数据 shuffle 策略是 Global，所有数据发往一个并发，然后将满足条件的数据进行关联输出
 
 ```sql
 
---  IntervalWindowJoin: INNER JOIN，
+--  IntervalWindowJoin: INNER JOIN， clickTime > showTime > clickTime - 2min
+-- 实际案例: 曝光日志关联点击日志筛选既有曝光又有点击的数据，条件是曝光关联之后发生 4 小时之内的点击，并且补充点击的扩展参数（show inner interval click）
+-- 给左表: show表 设置了 : showTime > clickTime - 2min  下界;  
+-- 给右表: click表 设置了 : clickTime > showTime (watermark?) 下界; 
+
 SELECT
   DATE_FORMAT(PROCTIME(), 'mm:ss') AS q_time,
   show_log_table.log_id AS log_key,
@@ -160,8 +170,25 @@ SELECT
   DATE_FORMAT(click_log_table.row_time, 'mm:ss.SSS') AS click_time
 FROM show_log_table INNER JOIN click_log_table ON show_log_table.log_id = click_log_table.log_id
   AND show_log_table.row_time BETWEEN click_log_table.row_time - INTERVAL '2' MINUTE AND click_log_table.row_time;
-
 -- 测试时, 可分别设置 时间间隔 30s -> 2min -> 1hour
+
+
+--  IntervalWindowJoin: Left Join，  clickTime + 2 > showTime > clientTime - 2 ; 
+-- showTime > clientTime - 40 sec; 
+-- clickTime > showTime - 20 sec; 
+
+SELECT
+  DATE_FORMAT(PROCTIME(), 'mm:ss') AS q_time,
+  show_log_table.log_id AS log_key,
+  show_log_table.msg_id AS show_msg_id,
+  click_log_table.msg_id AS click_msg_id,
+  timestampDiff(SECOND, show_log_table.row_time, click_log_table.row_time) AS interval_120s,
+  DATE_FORMAT(show_log_table.row_time, 'mm:ss.SSS') AS show_time,
+  DATE_FORMAT(click_log_table.row_time, 'mm:ss.SSS') AS click_time
+FROM show_log_table LEFT JOIN click_log_table ON show_log_table.log_id = click_log_table.log_id
+  AND show_log_table.row_time BETWEEN click_log_table.row_time - INTERVAL '40' SECOND AND click_log_table.row_time + INTERVAL '20' SECOND;
+
+
 
 ```
 
@@ -170,6 +197,120 @@ IntervalJoin_InnerJoin: 新数据( 右表 + 左表  ) + 左表2分钟内历史�
 
 
 ## Temporal Table Join 动态拉链表关联Join
+
+Temporal joins 基本
+* Temporal joins take an arbitrary table (left input/probe site) and correlate each row to the corresponding row’s relevant version in the versioned table (right input/build side).
+  - 左表(left input/ probe site/测量点) , 明细表,
+  - 右表: versioned table (right input/build side), 时态表, 版本表, 拉链快照表, 
+  - 根据时态表是否可以追踪自身的历史版本与否，时态表可以分为 版本表 和 普通表
+
+```sql
+-- 定义一个汇率 versioned 表，其中 versioned 表的概念下文会介绍到
+CREATE TABLE currency_rates (
+    currency STRING,
+    conversion_rate DECIMAL(32, 2),
+    update_time TIMESTAMP(3) METADATA FROM `values.source.timestamp` VIRTUAL,
+    WATERMARK FOR update_time AS update_time,
+    -- PRIMARY KEY 定义方式
+    PRIMARY KEY(currency) NOT ENFORCED
+) WITH (
+   'connector' = 'kafka',
+   'value.format' = 'debezium-json',
+   /* ... */
+);
+
+```
+
+```sql
+
+-- 定义一个 append-only 的数据源表
+CREATE TABLE currency_rates (
+    currency STRING,
+    conversion_rate DECIMAL(32, 2),
+    update_time TIMESTAMP(3) METADATA FROM `values.source.timestamp` VIRTUAL,
+    WATERMARK FOR update_time AS update_time
+) WITH (
+    'connector' = 'kafka',
+    'value.format' = 'debezium-json',
+    /* ... */
+);
+
+-- 将数据源表按照 Deduplicate 方式定义为 Versioned Table
+CREATE VIEW versioned_rates AS
+SELECT currency, conversion_rate, update_time   -- 1. 定义 `update_time` 为时间字段
+  FROM (
+      SELECT *,
+      ROW_NUMBER() OVER (PARTITION BY currency  -- 2. 定义 `currency` 为主键
+         ORDER BY update_time DESC              -- 3. ORDER BY 中必须是时间戳列
+      ) AS rownum 
+      FROM currency_rates)
+WHERE rownum = 1; 
+
+```
+
+
+
+```sql
+
+-- 1. 定义一个输入订单表
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id    BIGINT,
+    price       DECIMAL(16,2),
+    currency    INT,
+    order_time  AS CAST(CURRENT_TIMESTAMP as TIMESTAMP(3)),
+    WATERMARK FOR order_time AS order_time
+) WITH (
+'connector' = 'datagen',
+'rows-per-second' = '2',
+'fields.order_id.kind' = 'sequence',
+'fields.order_id.start' = '1',
+'fields.order_id.end' = '10000',
+'fields.price.min' = '100', 
+'fields.price.max' = '102', 
+'fields.currency.min' = '1', 
+'fields.currency.max' = '8'
+);
+
+-- 2. 定义一个汇率 versioned 表，其中 versioned 表的概念下文会介绍到
+DROP TABLE IF EXISTS currency_rates;
+CREATE TABLE currency_rates (
+    cr_id INT, 
+    currency INT, 
+    conversion_rate FLOAT, 
+    update_time AS CAST(CURRENT_TIMESTAMP as TIMESTAMP(3)), 
+    WATERMARK FOR update_time AS update_time, 
+    PRIMARY KEY(currency) NOT ENFORCED
+) WITH (
+    'connector' = 'datagen',
+    'rows-per-second' = '1',
+    'fields.cr_id.kind' = 'sequence',
+    'fields.cr_id.start' = '1',
+    'fields.cr_id.end' = '10000',
+    'fields.currency.min' = '1',
+    'fields.currency.max' = '30',
+    'fields.conversion_rate.min' = '6.8',
+    'fields.conversion_rate.max' = '8.2'
+);
+SELECT * FROM currency_rates;
+
+-- 3. 
+
+SELECT
+  order_id, 
+  orders.currency, 
+  conversion_rate, 
+  cr_id,      
+  timestampDiff(SECOND, update_time, order_time) AS timediff_sec,
+  order_time
+FROM orders 
+    LEFT JOIN currency_rates FOR SYSTEM_TIME AS OF orders.order_time 
+    ON orders.currency = currency_rates.currency;
+
+
+```
+
+
 
 
 ## Lookup Join 
