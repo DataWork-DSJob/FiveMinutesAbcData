@@ -82,7 +82,6 @@ CREATE TEMPORARY TABLE dwd_zq_end (
 SELECT * FROM dwd_zq_end;
 -- Ctl + C 退出 动态结果打印
 
-
 ```
 
 ### DWD 数仓明细层: 每笔交易的明细数据
@@ -114,8 +113,6 @@ end_ts TIMESTAMP(3),
 update_time AS localtimestamp,
 WATERMARK FOR update_time AS update_time
 );
-
-
 
 
 INSERT INTO dwd_zq_detail

@@ -5,8 +5,6 @@
 
 ## Demo 需求
 
-
-
 准备 Catalog和Db
 ```sql
 
@@ -87,7 +85,6 @@ FROM show_log_table
     INNER JOIN click_log_table ON show_log_table.log_id = click_log_table.log_id;
 
 
-
 -- OutJoin: Left Join, 左边表全输出?  右边表匹配(ON条件,为 log_id相等),则输出;  用户的曝光 + 点击日志 
 -- Left Join: 左表新数据(全) + 左表匹配历史数据 + 右表匹配历史数据; 
 SELECT
@@ -121,8 +118,6 @@ SELECT
   click_log_table.click_params
 FROM show_log_table
     FULL OUTER JOIN click_log_table ON show_log_table.log_id = click_log_table.log_id;
-
-
 
 ```
 
@@ -200,54 +195,11 @@ IntervalJoin_InnerJoin: 新数据( 右表 + 左表  ) + 左表2分钟内历史�
 
 Temporal joins 基本
 * Temporal joins take an arbitrary table (left input/probe site) and correlate each row to the corresponding row’s relevant version in the versioned table (right input/build side).
-  - 左表(left input/ probe site/测量点) , 明细表,
-  - 右表: versioned table (right input/build side), 时态表, 版本表, 拉链快照表, 
+  - 左表(left input/ probe site/测量点) , 明细表, 一般是业务数据流; 典型的数据流远大于右边(维度表)
+  - 右表: versioned table (right input/build side), 时态表, 版本表, 拉链快照表, 一般是纬度表的 changelog; 
   - 根据时态表是否可以追踪自身的历史版本与否，时态表可以分为 版本表 和 普通表
-
-```sql
--- 定义一个汇率 versioned 表，其中 versioned 表的概念下文会介绍到
-CREATE TABLE currency_rates (
-    currency STRING,
-    conversion_rate DECIMAL(32, 2),
-    update_time TIMESTAMP(3) METADATA FROM `values.source.timestamp` VIRTUAL,
-    WATERMARK FOR update_time AS update_time,
-    -- PRIMARY KEY 定义方式
-    PRIMARY KEY(currency) NOT ENFORCED
-) WITH (
-   'connector' = 'kafka',
-   'value.format' = 'debezium-json',
-   /* ... */
-);
-
-```
-
-```sql
-
--- 定义一个 append-only 的数据源表
-CREATE TABLE currency_rates (
-    currency STRING,
-    conversion_rate DECIMAL(32, 2),
-    update_time TIMESTAMP(3) METADATA FROM `values.source.timestamp` VIRTUAL,
-    WATERMARK FOR update_time AS update_time
-) WITH (
-    'connector' = 'kafka',
-    'value.format' = 'debezium-json',
-    /* ... */
-);
-
--- 将数据源表按照 Deduplicate 方式定义为 Versioned Table
-CREATE VIEW versioned_rates AS
-SELECT currency, conversion_rate, update_time   -- 1. 定义 `update_time` 为时间字段
-  FROM (
-      SELECT *,
-      ROW_NUMBER() OVER (PARTITION BY currency  -- 2. 定义 `currency` 为主键
-         ORDER BY update_time DESC              -- 3. ORDER BY 中必须是时间戳列
-      ) AS rownum 
-      FROM currency_rates)
-WHERE rownum = 1; 
-
-```
-
+* Temporal Table Join 类似于 Hash Join，将输入分为左表Probe Table  和 右表 Build Table ;
+* Build Table 是一个基于 append-only 数据流的带时间版本的视图，所以又称为 Temporal Table。Temporal Table 要求定义一个主键和用于版本化的字段（通常就是 Event Time 时间字段），以反映记录在不同时间的内容。
 
 
 ```sql
@@ -261,15 +213,15 @@ CREATE TABLE orders (
     order_time  AS CAST(CURRENT_TIMESTAMP as TIMESTAMP(3)),
     WATERMARK FOR order_time AS order_time
 ) WITH (
-'connector' = 'datagen',
-'rows-per-second' = '2',
-'fields.order_id.kind' = 'sequence',
-'fields.order_id.start' = '1',
-'fields.order_id.end' = '10000',
-'fields.price.min' = '100', 
-'fields.price.max' = '102', 
-'fields.currency.min' = '1', 
-'fields.currency.max' = '8'
+  'connector' = 'datagen', 
+  'rows-per-second' = '2', 
+  'fields.order_id.kind' = 'sequence',
+  'fields.order_id.start' = '1',
+  'fields.order_id.end' = '10000', 
+  'fields.price.min' = '100', 
+  'fields.price.max' = '102', 
+  'fields.currency.min' = '1', 
+  'fields.currency.max' = '8' 
 );
 
 -- 2. 定义一个汇率 versioned 表，其中 versioned 表的概念下文会介绍到
@@ -294,19 +246,19 @@ CREATE TABLE currency_rates (
 );
 SELECT * FROM currency_rates;
 
--- 3. 
+-- 3. Temporal Join, 暂时的 动态的 多版本的
 
 SELECT
   order_id, 
   orders.currency, 
   conversion_rate, 
-  cr_id,      
-  timestampDiff(SECOND, update_time, order_time) AS timediff_sec,
-  order_time
+  cr_id, 
+  timestampDiff(SECOND, update_time, order_time) AS timediff_sec, 
+  order_time 
 FROM orders 
     LEFT JOIN currency_rates FOR SYSTEM_TIME AS OF orders.order_time 
-    ON orders.currency = currency_rates.currency;
-
+    ON orders.currency = currency_rates.currency 
+;
 
 ```
 
@@ -314,6 +266,65 @@ FROM orders
 
 
 ## Lookup Join 
+
+使用曝光用户日志流（show_log）关联用户画像维表（user_profile）关联到用户的维度之后，提供给下游计算分性别，年龄段的曝光用户数使用。
+* The lookup join uses the above Processing Time Temporal Join syntax with the right table to be backed by a lookup source connector
+* 左表 处理时间(ProcessTime)事实表, 右表若为 lookup源算子(LookupTableSource接口) 算子, 使用FOR SYSTEM_TIME AS OF 作为TemporalJoin方式Join; 
+
+```sql
+
+-- 曝光用户日志流（show_log）数据（数据存储在 kafka 中）
+DROP TABLE IF EXISTS show_log;
+CREATE TABLE show_log (
+    log_id BIGINT,
+    `timestamp` AS CAST(CURRENT_TIMESTAMP as TIMESTAMP(3)),
+    user_id INT, 
+    proctime AS PROCTIME()
+) WITH (
+  'connector' = 'datagen',
+  'rows-per-second' = '1',
+  'fields.user_id.min' = '1001',
+  'fields.user_id.max' = '1009',
+  'fields.log_id.min' = '1',
+  'fields.log_id.max' = '10'
+);
+
+SELECT * FROM show_log;
+
+--- 这里需要 lookup connector, 像 jdbc, hbase, hive等; 另外, 网上有Hive的; 
+-- flink-table-store 目前尚未实现 LookupTableSource 接口, 计划v0.3版实现; 
+
+DROP TABLE IF EXISTS user_profile;
+CREATE TABLE user_profile (
+    user_id INT,
+    age INT,
+    user_info STRING, 
+    PRIMARY KEY (user_id) NOT ENFORCED 
+) WITH (
+    'connector' = 'datagen', 
+    'rows-per-second' = '1', 
+    'fields.user_id.min' = '1001',
+    'fields.user_id.max' = '1019',
+    'fields.age.min' = '18', 
+    'fields.age.max' = '65',
+    'fields.user_info.length' = '5'
+    );
+SELECT * FROM user_profile;
+
+
+-- lookup join 的 query 逻辑
+SELECT s.log_id as log_id
+     , s.`timestamp` as `timestamp`
+     , s.user_id as user_id
+     , s.proctime as proctime
+     , u.sex as sex
+     , u.age as age
+FROM show_log AS s 
+    LEFT JOIN user_profile FOR SYSTEM_TIME AS OF s.proctime AS u
+    ON s.user_id = u.user_id
+
+
+```
 
 
 
