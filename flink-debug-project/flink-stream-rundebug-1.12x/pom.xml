@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.bigdata</groupId>
+    <parent>
+        <groupId>com.github.bigdata</groupId>
+        <artifactId>flink-debug-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>flink-stream-rundebug-1.12x</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <properties>
         

@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+  <parent>
     <groupId>com.github.bigdata</groupId>
-    <artifactId>flink-debug-project</artifactId>
+    <artifactId>FiveMinutesAbcData</artifactId>
     <version>1.0-SNAPSHOT</version>
+  </parent>
+
+    <artifactId>flink-debug-project</artifactId>
     <packaging>pom</packaging>
 
 
@@ -26,17 +30,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <modules>
-        <module>flink-rundebug-common</module>
-<!--        <module>flink-stream-rundebug-1.9.x</module>-->
-        <module>flink-stream-rundebug-1.12x</module>
-        <!--<module>flink-yarn-winfix</module>-->
-
-    </modules>
-
-
     <build>
 
     </build>
+
+
+    <modules>
+        <module>flink-rundebug-common</module>
+        <!--        <module>flink-stream-rundebug-1.9.x</module>-->
+
+<!--        <module>flink-stream-rundebug-1.12x</module>-->
+                <module>flink-stream-rundebug-1.15x</module>
+        <!--<module>flink-yarn-winfix</module>-->
+
+    </modules>
 
 </project>

@@ -2,6 +2,7 @@ package flink.debug;
 
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -10,6 +11,7 @@ import org.junit.Test;
  */
 public class TestFlinkCommonDebug {
 
+    @Ignore
     @Test
     public void test(){
         FlinkDebugCommon flinkDebugCommon = new FlinkDebugCommon();

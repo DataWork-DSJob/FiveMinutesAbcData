@@ -2,8 +2,8 @@ package flink.debug;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.table.shaded.org.joda.time.DateTime;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class FixRateJsonStringSource implements SourceFunction<String> {
                 }
             });
         }
-        data.put("@timestamp", DateTime.now().toString());
+        data.put("@timestamp", LocalDateTime.now());
         data.put("batchCount",  String.valueOf(count));
         String json = JSON.toJSONString(data);
         ctx.collect(json);

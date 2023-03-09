@@ -14,7 +14,7 @@ public class FlinkStreamExample extends FlinkDebugCommon {
 
 
     @Test
-    public void simpleDemoByF112() throws Exception {
+    public void simpleDemoByF115() throws Exception {
         runSimpleDemoJsonSource2WindowAgg2Print(null, -1, 100000);
     }
 
@@ -44,7 +44,7 @@ public class FlinkStreamExample extends FlinkDebugCommon {
     }
 
     @Test
-    public void testFlinkFunctionsByFlink112() throws Exception {
+    public void testFlinkFunctionsByF115() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(2);
 

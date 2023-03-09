@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.bigdata</groupId>
+    <parent>
+        <groupId>com.github.bigdata</groupId>
+        <artifactId>flink-debug-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>flink-rundebug-common</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
 
     <properties>
 
@@ -14,8 +19,8 @@
 
         <!--<flink.version>1.10.1</flink.version>-->
         <flink.version>1.9.3</flink.version>
-        <!--<flink.scope>provided</flink.scope>-->
-        <flink.scope>compile</flink.scope>
+        <flink.scope>provided</flink.scope>
+<!--        <flink.scope>compile</flink.scope>-->
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -32,26 +37,26 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-runtime_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
-            <scope>${flink.scope}</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
-            <!--<scope>${flink.scope}</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
-            <scope>${flink.scope}</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-runtime-web_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
-            <scope>${flink.scope}</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>

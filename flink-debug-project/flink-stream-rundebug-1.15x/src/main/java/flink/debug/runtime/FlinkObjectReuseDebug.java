@@ -265,7 +265,7 @@ public class FlinkObjectReuseDebug extends FlinkDebugCommon {
         boolean hasMultiOutput = false;
         // 判断是否有多输出(OutEdge)情况, 如果某个算子下游输出2个以上, 则 hasMultiOutput = true,需禁用 对象重用(ObjectReuse);
         // 这里 clearTransformations必需填false, 否则后面执行会报错;
-        StreamGraph streamGraph = env.getStreamGraph(this.getClass().getSimpleName(), false);
+        StreamGraph streamGraph = env.getStreamGraph( false);
         Collection<StreamNode> streamNodes = streamGraph.getStreamNodes();
         for (StreamNode streamNode: streamNodes) {
             if (streamNode.getOutEdges().size() > 1) {
