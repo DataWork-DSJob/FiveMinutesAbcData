@@ -12,8 +12,8 @@
 
     <modules>
         <module>flink-debug-project</module>
+        <module>data-sender</module>
 <!--        <module>spark-kafka-study</module>-->
-
 
     </modules>
 

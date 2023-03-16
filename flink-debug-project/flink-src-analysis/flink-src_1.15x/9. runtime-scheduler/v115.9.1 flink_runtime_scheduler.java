@@ -2,8 +2,40 @@
 
 // flink_1.15_src
 
+Job的资源管理 scheduler生成时机: 
+- Client端发出submitJob请求并提交作业后, JM进程接受消息并执行 submitJob()方法; 
+
+// JM进程, Akka消息路由Dispatcher
+Dispatcher.submitJob() -> Dispatcher.internalSubmitJob()
+	waitForTerminatingJob() -> Dispatcher.persistAndRunJob()
+		Dispatcher.createJobMasterRunner() 
+			DefaultSlotPoolServiceSchedulerFactory.fromConfiguration();
+
+
+
+
+
 DefaultSlotPoolServiceSchedulerFactory.fromConfiguration(Configuration configuration, JobType jobType) {
-	JobManagerOptions.SchedulerType schedulerType = ClusterOptions.getSchedulerType(configuration);
+	JobManagerOptions.SchedulerType schedulerType = ClusterOptions.getSchedulerType(configuration);{
+        // jobmanager.scheduler= Adaptive 时; (有3个值: Ng, Adaptive, AdaptiveBatch, 默认Ng);
+		boolean isAdaptiveSchedulerEnabled = isAdaptiveSchedulerEnabled(configuration);{
+			if (configuration.contains(JobManagerOptions.SCHEDULER)) {// 包含 jobmanager.scheduler 关键Key吗?
+				return configuration.get(JobManagerOptions.SCHEDULER) == JobManagerOptions.SchedulerType.Adaptive;
+			} else {
+				return System.getProperties().containsKey("flink.tests.enable-adaptive-scheduler");
+			}
+		}
+		// scheduler-mode=reactive 时; 也返回 Adaptive; 
+		boolean isReactiveMode = isReactiveModeEnabled(configuration);{
+			return configuration.get(JobManagerOptions.SCHEDULER_MODE) == SchedulerExecutionMode.REACTIVE;
+		}
+		
+		if (isAdaptiveSchedulerEnabled || isReactiveMode) {
+            return JobManagerOptions.SchedulerType.Adaptive;
+        } else {
+            return configuration.get(JobManagerOptions.SCHEDULER);
+        }
+	}
 	if (schedulerType == JobManagerOptions.SchedulerType.Adaptive && jobType == JobType.BATCH) {
 		schedulerType = JobManagerOptions.SchedulerType.Ng;
 	}
@@ -60,6 +92,41 @@ DefaultSlotPoolServiceSchedulerFactory.createScheduler() {
 		AdaptiveBatchSchedulerFactory.createInstance();{}
 	}
 }
+
+
+
+// 在JobMaster服务创建时, 实例化 Scheduler的对象: DefaultScheduler, AdaptiveScheduler, AdaptiveBatchScheduler
+
+new JobMaster(new DefaultExecutionDeploymentTracker());{//new JobMaster() 构造函数中
+		resourceManagerLeaderRetriever =highAvailabilityServices.getResourceManagerLeaderRetriever();
+		this.schedulerNG = createScheduler(executionDeploymentTracker, jobManagerJobMetricGroup);{//DefaultSlotPoolServiceSchedulerFactory.createScheduler()
+			return schedulerNGFactory.createInstance();{//DefaultSchedulerFactory.
+				
+				// 自适应调度NGFactory: case Adaptive: Reactive Mode, Adaptive  Mode, 
+				AdaptiveSchedulerFactory.createInstance();{
+					SlotSharingSlotAllocator slotAllocator = createSlotSharingSlotAllocator(declarativeSlotPool);
+					return new AdaptiveScheduler();
+				}
+				// 默认的 NG调度, // ng 
+				DefaultSchedulerFactory.createInstance();{
+					DefaultSchedulerComponents schedulerComponents =createSchedulerComponents();
+					restartBackoffTimeStrategy =RestartBackoffTimeStrategyFactoryLoader.createRestartBackoffTimeStrategyFactory().create();
+					return new DefaultScheduler();{super(){// SchedulerBase构造方法, 构建执行计划Graph
+						this.executionGraph =createAndRestoreExecutionGraph();{
+							ExecutionGraph newExecutionGraph =createExecutionGraph();
+							inputsLocationsRetriever =new ExecutionGraphToInputsLocationsRetrieverAdapter(executionGraph);
+							this.coordinatorMap = createCoordinatorMap();
+						}}
+					}
+				}
+				
+				//  case AdaptiveBatch:
+				AdaptiveBatchSchedulerFactory.createInstance();{}
+				
+		}
+	}
+}
+
 
 
 

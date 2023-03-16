@@ -37,3 +37,5 @@ jobmanager.execution.failover-strategy: region
 # env.java.opts.jobmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42040"
 # env.java.opts.taskmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42050"
 
+scheduler-mode: reactive
+

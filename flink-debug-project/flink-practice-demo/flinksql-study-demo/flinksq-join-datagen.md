@@ -123,16 +123,16 @@ FROM show_log_table
 
 ```
 
-![flinksql_join_regular_inner.png](flinksql_join_regular_inner.png)
+![flinksql_join_regular_inner.png](images/flinksql_join_regular_inner.png)
 Rugular Join 特点: 
 * 历史数据无止境的关联(缓存); Regular没有缓存清理策略; 
 * Inner Join, 只输出 完全匹配(On条件)的行;  新数据中左表右表完全匹配的 + 左表匹配历史数据 + 右表匹配历史数据;
 
 
-![LeftJoin.png](flinksql_regularjoin_leftJoin.png)
+![LeftJoin.png](images/flinksql_regularjoin_leftJoin.png)
 LeftJoin(Regular): 左表新数据(全) + 左表匹配历史数据 + 右表匹配历史数据;
 
-![FullOutJoin.png](flinksql_regularjoin_fullOutJoin.png)
+![FullOutJoin.png](images/flinksql_regularjoin_fullOutJoin.png)
 Full-Out-Join: 左表新数据 + 右表新数据 + 左表匹配的历史数据 + 右表匹配的历史数据; 
 
 
@@ -189,7 +189,7 @@ FROM show_log_table LEFT JOIN click_log_table ON show_log_table.log_id = click_l
 
 ```
 
-![img.png](fsql_intervaljoin_innerJoin2m.png)
+![img.png](images/fsql_intervaljoin_innerJoin2m.png)
 IntervalJoin_InnerJoin: 新数据( 右表 + 左表  ) + 左表2分钟内历史数据 右表(看Interval条件)
 
 

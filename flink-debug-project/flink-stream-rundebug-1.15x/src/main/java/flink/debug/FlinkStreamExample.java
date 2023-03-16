@@ -1,11 +1,14 @@
 package flink.debug;
 
 
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.runtime.jobmaster.DefaultSlotPoolServiceSchedulerFactory;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 public class FlinkStreamExample extends FlinkDebugCommon {
@@ -49,6 +52,18 @@ public class FlinkStreamExample extends FlinkDebugCommon {
         env.setParallelism(2);
 
         testFlinkFunctions(env);
+    }
+
+    @Test
+    public void testSrcClass() {
+        // Config
+        Configuration configuration = Configuration.fromMap(new HashMap<>());
+
+        // Runtime: Scheduler
+        DefaultSlotPoolServiceSchedulerFactory scheduler = DefaultSlotPoolServiceSchedulerFactory.fromConfiguration(configuration, null);
+
+
+
     }
 
 
