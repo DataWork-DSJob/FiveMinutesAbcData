@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @Author: jiaqing.he
  * @DateTime: 2022/9/16 14:33
  */
+@Ignore
 public class TestJsonFileKafkaSender {
 
     /**

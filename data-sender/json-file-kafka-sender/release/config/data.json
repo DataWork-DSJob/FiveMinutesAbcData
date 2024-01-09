@@ -1,0 +1,7 @@
+{
+	"timestamp": "2022/11/08 11:07:57",
+	"jsonArray": "[{\"metric\":\"cpu_second\",\"prometheus\":\"cpu_second{instance=\\\"hadoop01\\\", app_id=\\\"app_202211260928\\\"} 2580.21\",\"val\":2580.21},{\"metric\":\"heap_memory\",\"prometheus\":\"heap_memory{instance=\\\"kafka6\\\", app_id=\\\"app_20221123933\\\"} 10485760\",\"val\":10485760}]",
+	"log": "2022-05-17T04:09:02.487660Z [Note] TransformInfo:20230201132710||201000042022039349092393||EXZCash||BR2580019||10000.00||27||0000||192.168.110.152||xyz", 
+	"prometheus":"cpu_second{instance=\"hadoop01\", app_id=\"app_202211260928\"} 2580.21",
+	"logHeader": "1669166386000|320|1|ZGBX|node1002"
+}

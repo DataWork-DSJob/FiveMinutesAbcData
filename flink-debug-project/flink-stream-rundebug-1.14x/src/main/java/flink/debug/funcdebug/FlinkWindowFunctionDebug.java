@@ -1,4 +1,4 @@
-package flink.debug.funcdebug;
+package flink.debug.funcdemo;
 
 
 import flink.debug.FlinkDebugCommon;

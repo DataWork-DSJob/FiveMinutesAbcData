@@ -1,0 +1,41 @@
+
+
+# Flink Metrics on Promgateway
+# metrics.reporter.promgateway.class: org.apache.flink.metrics.prometheus.PrometheusPushGatewayReporter
+# metrics.reporter.promgateway.host: bdnode102
+# metrics.reporter.promgateway.port: 9091
+# metrics.reporter.promgateway.jobName: FlinkJob
+# metrics.reporter.promgateway.randomJobNameSuffix: true
+# metrics.reporter.promgateway.deleteOnShutdown: false
+
+# Flink Metrics on Kafka
+metrics.reporter.kafka.factory.class: org.apache.flink.metrics.kafka.KafkaReporterFactory
+metrics.reporter.kafka.bootstrapServers: bdnode102:9092
+metrics.reporter.kafka.topic: flink-metrics
+metrics.reporter.kafka.chunkSize: 20
+
+object.reuse: true
+
+execution.result-mode: table
+execution.parallelism: 1
+execution.restart-strategy.type: failure-rate
+
+execution.object-reuse: failure-rate
+
+taskmanager.network.memory.fraction: 0.15
+taskmanager.network.memory.min: 64MB
+taskmanager.memory.segment-size: 100KB
+
+jobmanager.rpc.port: 6123
+jobmanager.memory.process.size: 1600m
+taskmanager.memory.process.size: 2048m
+taskmanager.numberOfTaskSlots: 4
+parallelism.default: 3
+
+jobmanager.execution.failover-strategy: region
+
+# env.java.opts.jobmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42040"
+# env.java.opts.taskmanager: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=42050"
+
+scheduler-mode: reactive
+

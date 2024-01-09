@@ -2,13 +2,9 @@ package com.github.testing.jsonfilesender;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.testing.jsonfilesender.utils.FileIOHelper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -35,34 +31,6 @@ public class FileJsonCreator implements Callable<JSONObject> {
             "}\n";
 
 
-    public static JSONObject readPointFileAsBean(File file)  {
-        JSONObject pointTemplateArrays = null;
-        InputStream fio = null;
-        try {
-            fio = new FileInputStream(file);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fio));
-            StringBuffer buffer = new StringBuffer();
-            String str = null;
-            while ((str = br.readLine()) != null) {
-                buffer.append(str.trim()).append("\n");
-            }
-            String strContext = buffer.toString();
-            pointTemplateArrays = JSON.parseObject(strContext);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e.getCause());
-        } finally {
-            if (null != fio) {
-                try {
-                    fio.close();
-                } catch (IOException e) {
-                    fio = null;
-                }
-            }
-        }
-        return pointTemplateArrays;
-    }
-
-
     private JSONObject templateRecord;
     private Map.Entry<String, Object> timeEntry;
 
@@ -70,7 +38,7 @@ public class FileJsonCreator implements Callable<JSONObject> {
         File jsonTemplateFile = argument.getJsonTemplateFile();
         JSONObject jsonTemplate;
         if (null != jsonTemplateFile && jsonTemplateFile.exists()) {
-            jsonTemplate = readPointFileAsBean(jsonTemplateFile);
+            jsonTemplate = FileIOHelper.readPointFileAsBean(jsonTemplateFile);
         } else {
             jsonTemplate = JSON.parseObject(JSON_TEMPLATE);
         }

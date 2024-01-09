@@ -3,6 +3,9 @@ package flink.debug.configdebug;
 
 import flink.debug.FlinkDebugCommon;
 import org.apache.flink.api.common.ExecutionConfig;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.CoreOptions;
+import org.apache.flink.configuration.TaskManagerOptions;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.Before;
@@ -11,6 +14,7 @@ import org.junit.Test;
 public class FlinkConfigurationDebug extends FlinkDebugCommon {
 
     private String bootstrapServers = "192.168.110.79:9092";
+
 
 
     @Before
@@ -49,6 +53,16 @@ public class FlinkConfigurationDebug extends FlinkDebugCommon {
         env.setParallelism(2);
 
         pressureTest(env);
+    }
+
+
+    @Test
+    public void testMiniClusterConfiguration() throws Exception {
+
+        Configuration configuration = new Configuration();
+        configuration.set(TaskManagerOptions.NUM_TASK_SLOTS, 4);
+        configuration.set(CoreOptions.DEFAULT_PARALLELISM, 6);
+        runSimpleDemoJsonSource2WindowAgg2PrintWithEnv(configuration, -1, 1000);
     }
 
 

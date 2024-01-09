@@ -1,0 +1,59 @@
+[
+  {
+    "typeName": "BD_sys_log",
+    "timestamp": "2023-08-15T03:03:01.554+08:00",
+    "dimensions": {
+      "system_name": "BigDataCenter",
+      "hostname": "hadoop01",
+      "clustername": "Cluster_一体化管理"
+    },
+    "metrics": {
+      "time_cost": 11
+    },
+    "otherFields": {
+      "bus_code": "XAabt323023909230",
+      "log_level": "INFO",
+      "msg_info":"AZXT运营中台",
+      "message": "NULL"
+    }
+  }
+,
+  {
+    "typeName": "BD_sys_log",
+    "timestamp": "2023-08-15T03:02:22.554+08:00",
+    "dimensions": {
+      "system_name": "BigDataCenter",
+      "hostname": "hadoop01",
+      "clustername": "Cluster_一体化管理"
+    },
+    "metrics": {
+      "time_cost": 11
+    },
+    "otherFields": {
+      "bus_code": "XAabt323023909230",
+      "log_level": "INFO",
+      "msg_info":"AZXT运营中台",
+      "message": "NULL"
+    }
+  }
+,
+  {
+    "typeName": "BD_sys_log",
+    "timestamp": "2023-08-15T03:03:13.554+08:00",
+    "dimensions": {
+      "system_name": "BigDataCenter",
+      "hostname": "hadoop01",
+      "clustername": "Cluster_一体化管理"
+    },
+    "metrics": {
+      "time_cost": 11
+    },
+    "otherFields": {
+      "bus_code": "XAabt323023909230",
+      "log_level": "INFO",
+      "msg_info":"AZXT运营中台",
+      "message": "NULL"
+    }
+  }
+
+]

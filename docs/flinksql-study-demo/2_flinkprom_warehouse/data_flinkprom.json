@@ -1,0 +1,38 @@
+[
+{
+  "lineNo": 230,
+  "queryTime": 1702383227078,
+  "metricName": "flink_taskmanager_job_task_operator_numRecordsOut",
+  "metricValue": 0,
+  "metricTime": 1702210108193,
+  "task_name": "GroupAggregate_5_____Calc_6_____ConstraintEnforcer_7_",
+  "task_attempt_id": "11a982e2e70dafc12c554a1f314da527_20ba6b65f97481d5570070de90e4e791_0_0",
+  "operator_id": "cdf5528fc65ae6b8b6b126cfdfcc40dd",
+  "exported_job": "f3197d5ae590a",
+  "task_id": "20ba6b65f97481d5570070de90e4e791",
+  "task_attempt_num": "0",
+  "jvm_pid": "container_1702182193084_0011_01_000002",
+  "operator_name": "Calc_6_",
+  "job_name": "insert_into_paimon_default_dws_trade_gby_branch",
+  "tm_id": "container_1702182193084_0011_01_000002",
+  "job_id": "78ae0d63776baf541340fb100cd12944",
+  "host": "bdnode103_hjq_com",
+  "app_resource": "application_1702182193084_0011",
+  "subtask_index": "0"
+}
+,
+{
+  "metricName": "flink_taskmanager_job_task_operator_numRecordsOut",
+  "metricValue": 3.14,
+  "metricTime": 1702210108193,
+  "lineNo": 230,
+  "host": "bdnode103_hjq_com",
+  "app_resource": "application_1702182193084_0011"
+  "job_name": "insert_into_paimon_default_dws_trade_gby_branch",
+  "job_id": "78ae0d63776baf541340fb100cd12944",
+  "tm_id": "container_1702182193084_0011_01_000002",
+  "task_name": "GroupAggregate_5_____Calc_6_____ConstraintEnforcer_7_"
+}
+
+
+]

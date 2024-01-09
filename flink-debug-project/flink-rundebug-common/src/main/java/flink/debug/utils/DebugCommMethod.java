@@ -1,11 +1,12 @@
 package flink.debug.utils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DebugCommMethod {
+public class DebugCommMethod implements Serializable {
 
 
     public Path getOrCreateDirFromUserDir(String dirName) {

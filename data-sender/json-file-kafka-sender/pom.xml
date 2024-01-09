@@ -88,34 +88,10 @@
     <build>
         <plugins>
 
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <version>3.6.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default-compile</id>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <id>default-testCompile</id>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <source>1.8</source>-->
-<!--                    <target>1.8</target>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                    <maxmem>1024m</maxmem>-->
-<!--                    <fork>true</fork>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>-Xlint:all,-serial,-path</arg>-->
-<!--                    </compilerArgs>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution><!-- 配置执行器 -->
                         <id>make-assembly</id>
@@ -124,11 +100,19 @@
                             <goal>single</goal><!-- 只运行一次 -->
                         </goals>
                         <configuration>
+                            <archive> <!-- 指定主函数 main class  -->
+                                <manifest>
+                                    <mainClass>com.github.testing.jsonfilesender.JsonFileKafkaSender</mainClass>
+                                </manifest>
+                            </archive>
                             <!-- 最终文件名 -->
                             <finalName>${project.name}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors> <!-- assembly配置文件 -->
+                                <descriptor>release/distribution.xml</descriptor>
+                            </descriptors>
                             <!-- Assembly 打包方式核心配置 文件路径-->
-                            <descriptor>release/distribution.xml</descriptor>
+
                         </configuration>
                     </execution>
                 </executions>

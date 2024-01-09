@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  victoriametrics_vm_8428:
+    image: victoriametrics/victoria-metrics
+    container_name: victoriametrics_vm_8428
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./vm-data:/victoria-metrics-data
+      - ./victoriametrics:/victoriametrics
+      - ./prometheus.yml:/etc/prometheus.yml
+    command:
+      - '-promscrape.config=/etc/prometheus.yml'
+      - '-retentionPeriod=7d'
+
+  zookeeper_vm_2181:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper_vm_2181
+    ports:
+      - 2181:2181
+    volumes:
+      - ./data/zookeeper/data:/data
+      - ./data/zookeeper/datalog:/datalog
+      - ./data/zookeeper/logs:/logs
+
+  kafka_vm_9092:
+    image: wurstmeister/kafka
+    depends_on:
+      - zookeeper_vm_2181
+    container_name: kafka_vm_9092
+    # 对外暴露JMX_PORT: 9999
+    ports:
+      - 9092:9092
+      - 40991:40991
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper_vm_2181:2181
+      # 需要设置环境变量:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_AD_IP}:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_LOG_DIRS: /data/kafka-data
+      KAFKA_LOG_CLEANUP_POLICY: "delete"
+      KAFKA_LOG_RETENTION_MS: 600000  # 10分钟删除
+      KAFKA_CREATE_TOPICS: testSourceTopic:4:1,testSinkTopic:2:1 # 启动创建2个测试Topic
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${KAFKA_AD_IP} -Dcom.sun.management.jmxremote.rmi.port=40991"
+      JMX_PORT: 40991  # 导入JMX_PORT环境变量
+    volumes:
+      - ./data/kafka:/data/kafka-data
+    restart: unless-stopped
+  kafka_manager_39000:
+    image: sheepkiller/kafka-manager
+    command: -Dpidfile.path=/dev/null
+    container_name: kafka_manager
+    depends_on:
+      - zookeeper_vm_2181
+    ports:
+      - 39000:9000
+    environment:
+      ZK_HOSTS: zookeeper_vm_2181:2181
+
+  grafana_vm_3000:
+    image: grafana/grafana:7.1.4
+    container_name: grafana_vm_3000
+    ports:
+      - "3000:3000"
+
+  kafka_exporter_vm_9308:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka_exporter_vm_9308
+    restart: unless-stopped
+    depends_on:
+      - victoriametrics_vm_8428
+      - kafka_vm_9092
+      - kafka_manager_39000
+      - grafana_vm_3000
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=${KAFKA_AD_IP}:9092'
+

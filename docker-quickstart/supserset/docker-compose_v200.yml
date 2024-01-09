@@ -1,0 +1,18 @@
+version: "3"
+services:
+  superset:
+    image: amancevice/superset:2.0.0
+    container_name: superset
+    privileged: true
+    user: root
+    environment:
+      - SUPERSET_ADMIN_USERNAME=admin
+      - SUPERSET_ADMIN_PASSWORD=admin
+      - SUPERSET_LOAD_EXAMPLES=yes
+    volumes:
+      - ./etc_superset:/etc/superset
+      - ./data:/var/lib/superset
+    ports:
+      # 这个和YarnRmWeb的 8088冲突了
+      - 18088:8088
+

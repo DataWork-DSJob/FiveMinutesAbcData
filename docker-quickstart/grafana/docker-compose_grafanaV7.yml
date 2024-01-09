@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  grafana_v7_43001:
+    image: grafana/grafana:7.1.4
+    container_name: grafana_v7_43001
+    privileged: true
+    user: root
+    ports:
+      - "43001:3000"
+    volumes:
+      - ./data/data:/var/lib/grafana
+      - ./data/log:/var/log/grafana
+      - ./data/conf:/etc/grafana

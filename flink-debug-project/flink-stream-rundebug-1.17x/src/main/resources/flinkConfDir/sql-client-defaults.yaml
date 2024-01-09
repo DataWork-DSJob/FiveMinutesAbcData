@@ -1,0 +1,29 @@
+# My FlinkSQL Setting: 
+catalogs: 
+  - name: myhive
+    type: hive
+    hive-conf-dir: D:\app-bigdata\hive\conf
+
+execution:
+  planner: blink
+  type: streaming
+  time-characteristic: event-time
+  periodic-watermarks-interval: 200
+  result-mode: table
+  max-table-result-rows: 1000000
+  parallelism: 1
+  max-parallelism: 128
+  min-idle-state-retention: 0
+  max-idle-state-retention: 0
+  current-catalog: myhive
+  current-database: default
+  restart-strategy:
+    type: fallback
+
+tables: [] 
+functions: []
+deployment:
+  response-timeout: 5000
+  gateway-address: ""
+  gateway-port: 0
+

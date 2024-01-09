@@ -1,4 +1,99 @@
 
+/** 计算中状态的读取; 
+*
+*/
+
+
+
+WindowOperator.processElement() {
+	for (W window : elementWindows) {
+		
+		windowState.setCurrentNamespace(window);
+		windowState.add(element.getValue()); {
+			
+			// RocksDB
+			RocksDBAggregatingState.add(T value) {
+				// 获取namespace TimeWindow对象的二进制 
+				byte[] key = getKeyBytes();
+				// 读取 accumulator 对象, 从状态中读取 
+				ACC accumulator = getInternal(key); {// RocksDBAggregatingState.getInternal()
+					byte[] valueBytes = backend.db.get(columnFamily, key); {//RocksDB.get(ColumnFamilyHandle columnFamily,byte[] key)
+						// 执行 frocksdbjni包的  org.rocksdb.RocksDB的 native 方法 
+						org.rocksdb.RocksDB.get(ColumnFamilyHandle columnFamily,byte[] key);
+					}
+					if (valueBytes == null) {
+						return null;
+					}
+					dataInputView.setBuffer(valueBytes);
+					return valueSerializer.deserialize(dataInputView);
+				}
+				accumulator = accumulator == null ? aggFunction.createAccumulator() : accumulator;
+				
+				// 这里是把 key,value字节 存到 RocksDB中;
+				updateInternal(key, aggFunction.add(value, accumulator)); {//RocksDBAggregatingState.updateInternal()
+					backend.db.put(columnFamily, writeOptions, key, getValueBytes(valueToStore)); {//RocksDB.put(ColumnFamilyHandle var1, WriteOptions var2, byte[] var3, byte[] var4)
+						// 执行 frocksdbjni包的  org.rocksdb.RocksDB的 native 方法 
+						org.rocksdb.RocksDB.put(ColumnFamilyHandle columnFamily, WriteOptions var2, byte[] key);
+					}
+				}
+			}
+			
+			// Memory 
+			HeapAggregatingState.add() {
+				stateTable.transform(namespace, value, aggregateTransformation);{//StateTable.transform()
+					checkKeyNamespacePreconditions(key, namespace);
+					int keyGroup = keyContext.getCurrentKeyGroupIndex();
+					// stateMap: CopyOnWriteStateMap , h
+					StateMap<K, N, S> stateMap = getMapForKeyGroup(keyGroup);
+					stateMap.transform(key, namespace, value, transformation);{
+						// entry.state 就是 聚合器 accumulator对象; 这一步是从 状态(内存)中读取 accumulator 对象; 
+						StateMapEntry<K, N, S> entry = putEntry(key, namespace); {//CopyOnWriteStateMap.putEntry()
+							int hash = computeHashForOperationAndDoIncrementalRehash(key, namespace);
+							StateMapEntry<K, N, S>[] tab = selectActiveTable(hash);
+							int index = hash & (tab.length - 1);
+							
+							for (StateMapEntry<K, N, S> e = tab[index]; e != null; e = e.next) {
+								if (e.hash == hash && key.equals(e.key) && namespace.equals(e.namespace)) {
+									return e;
+								}
+							}
+							++modCount;
+							return addNewStateMapEntry(tab, key, namespace, hash);
+						}
+						
+						S accumulator = (entry.stateVersion < highestRequiredSnapshotVersion)
+											? getStateSerializer().copy(entry.state)
+											: entry.state; 
+						
+						entry.state =transformation.apply(accumulator, value);{//HeapAggregatingState$AggregateTransformation.apply(ACC accumulator, IN value)
+							if (accumulator == null) {
+								accumulator = aggFunction.createAccumulator();
+							}
+							return aggFunction.add(value, accumulator);
+						}
+					}
+				}
+			}
+			
+		}
+	}
+}
+
+
+put:511, RocksDB (org.rocksdb)
+updateInternal:78, AbstractRocksDBAppendingState (org.apache.flink.contrib.streaming.state)
+add:103, RocksDBAggregatingState (org.apache.flink.contrib.streaming.state)
+processElement:422, WindowOperator (org.apache.flink.streaming.runtime.operators.windowing)
+emitRecord:191, OneInputStreamTask$StreamTaskNetworkOutput (org.apache.flink.streaming.runtime.tasks)
+
+apply:135, HeapAggregatingState$AggregateTransformation (org.apache.flink.runtime.state.heap)
+transform:373, CopyOnWriteStateMap (org.apache.flink.runtime.state.heap)
+transform:205, StateTable (org.apache.flink.runtime.state.heap)
+add:105, HeapAggregatingState (org.apache.flink.runtime.state.heap)
+processElement:422, WindowOperator (org.apache.flink.streaming.runtime.operators.windowing)
+
+
+
 
 
 //flink-core_state_src1.12x: 状态存储的初始化 

@@ -21,7 +21,7 @@
         <scala.binary.version>2.11</scala.binary.version>
 
         <!--<flink.version>1.10.1</flink.version>-->
-        <flink.version>1.12.2</flink.version>
+        <flink.version>1.12.5</flink.version>
         <flink.scope>compile</flink.scope>
 
         <junit.version>4.12</junit.version>
@@ -34,15 +34,16 @@
 
     </build>
 
-
     <modules>
         <module>flink-rundebug-common</module>
-        <!--        <module>flink-stream-rundebug-1.9.x</module>-->
+<!--                <module>flinksql-udfs</module>-->
+                <module>flink-stream-rundebug-1.9.x</module>
 
 <!--        <module>flink-stream-rundebug-1.12x</module>-->
-                <module>flink-stream-rundebug-1.15x</module>
+<!--                <module>flink-stream-rundebug-1.15x</module>-->
+                <module>flink-stream-rundebug-1.17x</module>
         <!--<module>flink-yarn-winfix</module>-->
-
+        <module>paimon-api-study</module>
     </modules>
 
 </project>

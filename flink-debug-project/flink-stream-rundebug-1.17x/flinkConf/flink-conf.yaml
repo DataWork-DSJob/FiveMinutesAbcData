@@ -1,0 +1,35 @@
+
+jobmanager.rpc.address: localhost
+# The RPC port where the JobManager is reachable.
+jobmanager.rpc.port: 6123
+jobmanager.bind-host: localhost
+jobmanager.memory.process.size: 1024m
+
+taskmanager.bind-host: localhost
+taskmanager.host: localhost
+taskmanager.memory.process.size: 2048m
+taskmanager.numberOfTaskSlots: 6
+
+parallelism.default: 1
+
+#重要！！！！Flink-CK相关参数，必须设置，根据自己的机器路径配置，不配置读不到更新数据！！！为了更快的看出数据的表更，将ck间隔设置为10s一次
+# fs.default-scheme: file:Users/hubiwei/opt/test
+fs.default-scheme: file:///tmp/flink/testfsqlclient
+execution.checkpointing.interval: 10s
+execution.checkpointing.max-concurrent-checkpoints: 1
+execution.checkpointing.timeout: 10min
+state.backend: hashmap
+# state.checkpoints.dir: file:Users/hbw/opt/test
+state.checkpoints.dir: file:///tmp/flink/testfsqlclient
+
+jobmanager.execution.failover-strategy: region
+
+# rest.port: 9998
+
+rest.address: localhost
+rest.bind-address: localhost
+
+# Flag to specify whether job submission is enabled from the web-based
+# 非常重要！！！！！ 一定得设置，不然会IO错误
+execution.target: local
+

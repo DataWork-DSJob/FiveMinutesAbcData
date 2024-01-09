@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  clickhouse_server_19000:
+    image: yandex/clickhouse-server:21.3.20-alpine
+    container_name: clickhouse_server_19000
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - "18123:8123"
+      - "19000:9000"
+    volumes:
+      # 默认配置
+      - ./config/docker_related_config.xml:/etc/clickhouse-server/config.d/docker_related_config.xml
+
+      - ./config/config.xml:/etc/clickhouse-server/config.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.xml
+      - ./log:/var/log/clickhouse-server
+      - ./db:/var/lib/clickhouse
+

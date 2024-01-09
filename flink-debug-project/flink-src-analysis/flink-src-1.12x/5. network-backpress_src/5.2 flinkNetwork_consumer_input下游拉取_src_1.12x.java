@@ -1,10 +1,10 @@
 
-Task, 3¸ö:
+Task, 3ï¿½ï¿½:
 	Source: Custom Source
 	Map -> Timestamps/Watermarks -> Map 
 	Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out 
 
-TaskÈÎÎñ¼ÆËãÖ÷Ïß³Ì: 
+Taskï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½: 
 	Legacy Source Thread - Source: Custom Source (1/1)#0
 	
 	Task2: "Map -> Timestamps/Watermarks -> Map"
@@ -16,16 +16,16 @@ TaskÈÎÎñ¼ÆËãÖ÷Ïß³Ì:
 		Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (1/2)#0	\
 
 
-Êı¾İÁ÷×ªºÍÍøÂçShuffle Ïà¹Ø
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Shuffle ï¿½ï¿½ï¿½
 
-	Òì²½Ë¢³öÊı¾İµÄÏß³Ì OutputFlusher: OutputFlusher for XX
+	ï¿½ì²½Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½ï¿½ß³ï¿½ OutputFlusher: OutputFlusher for XX
 	
 		OutputFlusher for Source: Custom Source	
 		OutputFlusher for Map -> Timestamps/Watermarks -> Map	 
 		OutputFlusher for Map -> Timestamps/Watermarks -> Map	 
 		
 
-¹Ø¼üÀàÓë¹¦ÄÜ
+ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½
 	InputGate:	SingleInputGate
 	ResultPartition:	IntermediateResultPartitionID, BufferWritingResultPartition, PipelinedResultPartition
 	InputChannel:	
@@ -49,15 +49,15 @@ TaskÈÎÎñ¼ÆËãÖ÷Ïß³Ì:
 	
 	
 	
-Ô­Àí×Ü½á
-- TaskÍ¨¹ıRecordWriter½«½á¹ûĞ´ÈëResultPartitionÖĞ¡£RecordWriter¸ºÔğ½«¼ÇÂ¼¶ÔÏóĞòÁĞ»¯µ½bufferÖĞ;
-- TaskµÄÊäÈë±»³éÏóÎªInputGate£¬¶øInputGateÔòÓÉInputChannel×é³É£¬InputChannelºÍ¸ÃTaskĞèÒªÏû·ÑµÄResultSubpartitionÊÇÒ»Ò»¶ÔÓ¦µÄ¡£
--  TaskÍ¨¹ıÑ­»·µ÷ÓÃInputGate.getNextBufferOrEvent() ·½·¨×èÈûµÄ´ÓChannelÖĞ»ñÈ¡ÊäÈëÊı¾İ£¬²¢½«»ñÈ¡µÄÊı¾İ½»¸øËüËù·â×°µÄËã×Ó½øĞĞ´¦Àí£¬Õâ¹¹³ÉÁËÒ»¸öTaskµÄ»ù±¾ÔËĞĞÂß¼­
-- SingleInputGate Í¨¹ıÄÚ²¿Î¬»¤µÄÒ»¸ö¶ÓÁĞĞÎ³ÉÒ»¸öÉú²úÕß-Ïû·ÑÕßµÄÄ£ĞÍ£¬µ±InputChannelÖĞÓĞÊı¾İÊ±¾Í¼ÓÈëµ½¶ÓÁĞÖĞ£¬ÔÚĞèÒª»ñÈ¡Êı¾İÊ±´Ó¶ÓÁĞÖĞÈ¡³öÒ»¸öchannel£¬»ñÈ¡channelÖĞµÄÊı¾İ
-- Á½¸öÏß³Ì¹²ÏíÍ¬Ò»¸öBuffer Pool£¬Í¨¹ıwait()/notifyAllÀ´Í¬²½¡£InputGate¸ºÔğ¶ÁÈ¡Buffer
-	- µ±Ã»ÓĞBuffer¿ÉÒÔÏû·ÑÊ±£¬ÏÂÓÎËã×Ósum()µÄSubTaskÏß³Ì±»×èÈû£¨Í¨¹ıInputGateÖĞµÄinputChannelWithData.wait()·½·¨×èÈû£©
-	- µ±ÉÏÓÎËã×ÓĞ´Èë½á¹ûÊı¾İµ½ResultSubPartition£¬²¢flushµ½Bufferºó, »á»½ĞÑÏÂÓÎËã×Ósum()µÄSubTaskÏß³Ì£¨Í¨¹ıinputChannelWithData.notifyAll()·½·¨»½ĞÑ£©
-	- Ïß³Ì±»»½ĞÑºó»á´ÓBufferÖĞ¶ÁÈ¡Êı¾İ£¬¾­·´ĞòÁĞ»¯ºó£¬´«µİ¸øOperatorÖĞµÄÓÃ»§´úÂëÂß¼­´¦Àí
+Ô­ï¿½ï¿½ï¿½Ü½ï¿½
+- TaskÍ¨ï¿½ï¿½RecordWriterï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ResultPartitionï¿½Ğ¡ï¿½RecordWriterï¿½ï¿½ï¿½ğ½«¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½bufferï¿½ï¿½;
+- Taskï¿½ï¿½ï¿½ï¿½ï¿½ë±»ï¿½ï¿½ï¿½ï¿½ÎªInputGateï¿½ï¿½ï¿½ï¿½InputGateï¿½ï¿½ï¿½ï¿½InputChannelï¿½ï¿½É£ï¿½InputChannelï¿½Í¸ï¿½Taskï¿½ï¿½Òªï¿½ï¿½ï¿½Ñµï¿½ResultSubpartitionï¿½ï¿½Ò»Ò»ï¿½ï¿½Ó¦ï¿½Ä¡ï¿½
+-  TaskÍ¨ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½InputGate.getNextBufferOrEvent() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Channelï¿½Ğ»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½İ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½â¹¹ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Taskï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
+- SingleInputGate Í¨ï¿½ï¿½ï¿½Ú²ï¿½Î¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î³ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½Ä£ï¿½Í£ï¿½ï¿½ï¿½InputChannelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Í¼ï¿½ï¿½ëµ½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ò»ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½È¡channelï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½
+- ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì¹ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½Buffer Poolï¿½ï¿½Í¨ï¿½ï¿½wait()/notifyAllï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½InputGateï¿½ï¿½ï¿½ï¿½ï¿½È¡Buffer
+	- ï¿½ï¿½Ã»ï¿½ï¿½Bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sum()ï¿½ï¿½SubTaskï¿½ß³Ì±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½InputGateï¿½Ğµï¿½inputChannelWithData.wait()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½ResultSubPartitionï¿½ï¿½ï¿½ï¿½flushï¿½ï¿½Bufferï¿½ï¿½, ï¿½á»½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sum()ï¿½ï¿½SubTaskï¿½ß³Ì£ï¿½Í¨ï¿½ï¿½inputChannelWithData.notifyAll()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ£ï¿½
+	- ï¿½ß³Ì±ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½Bufferï¿½Ğ¶ï¿½È¡ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ó£¬´ï¿½ï¿½İ¸ï¿½Operatorï¿½Ğµï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	
 	
 
@@ -70,8 +70,8 @@ class SingleInputGate {
 	PrioritizedDeque<InputChannel> inputChannelsWithData
 	BufferPool bufferPool;
 	
-	//¹Ø¼ü·½·¨
-	Optional<BufferOrEvent> getNext() 		//Blocking call waiting for next {@link BufferOrEvent}. ×èÈû»ñÈ¡ 
+	//ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½
+	Optional<BufferOrEvent> getNext() 		//Blocking call waiting for next {@link BufferOrEvent}. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ 
 	Optional<BufferOrEvent> pollNext() 		//Poll the {@link BufferOrEvent}.
 
 	InputChannel getChannel(int channelIndex);	//Returns the channel of this gate.
@@ -84,12 +84,12 @@ class SingleInputGate {
 
 
 
-# 2  RecordEmit: Input.emitNex() Gate.poll(() ÏÂ¸öËã×ÓÀ­È¡»º´æ? 
-// Ïß³Ì , Data ÊÍ·Å, ¿ÉÓÃ? 
+# 2  RecordEmit: Input.emitNex() Gate.poll(() ï¿½Â¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½? 
+// ï¿½ß³ï¿½ , Data ï¿½Í·ï¿½, ï¿½ï¿½ï¿½ï¿½? 
 /**
 * StreamTask.processInput()	-> StreamOneInputProcessor.processInput()
 	StreamTaskNetworkInput.emitNext()
-		// ´ÓNonSpann.segment: MemorySegment ÖĞ¶ÁÈ¡×Ö½Ú,²¢ĞòÁĞ»¯³É Object¶ÔÏó; 
+		// ï¿½ï¿½NonSpann.segment: MemorySegment ï¿½Ğ¶ï¿½È¡ï¿½Ö½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½ Objectï¿½ï¿½ï¿½ï¿½; 
 		result = currentRecordDeserializer.getNextRecord(deserializationDelegate);
 			SpillingAdaptiveSpanningRecordDeserializer.getNextRecord() -> readNonSpanningRecord()
 				NonSpanningWrapper.readInto()
@@ -100,9 +100,9 @@ class SingleInputGate {
 									Kryo.readClassAndObject() 
 						}
 		
-		processElement(deserializationDelegate.getInstance(), output); ´¦ÀíÒ»ÌõÀ­È¡µÄÊı¾İ; 
+		processElement(deserializationDelegate.getInstance(), output); ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½; 
 		
-		// ²»ÊÇÍêÕû¶ÔÏó, Êı¾İ»¹Ã»À­Íê, ¾Í½øĞĞpollNext() À­ÏÂÒ»¸öMemorySegment ; 
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½İ»ï¿½Ã»ï¿½ï¿½ï¿½ï¿½, ï¿½Í½ï¿½ï¿½ï¿½pollNext() ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½MemorySegment ; 
 		
 		CheckpointedInputGate.pollNext() InputGateWithMetrics.pollNext() 
 			SingleInputGate.pollNext() -> getNextBufferOrEvent() -> SingleInputGate.waitAndGetNextData()
@@ -117,7 +117,28 @@ class SingleInputGate {
 */
 
 
-// Ïß³Ì,µÚ¶ş¸ötask: "Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (2/2)#0"
+// task: "Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (2/2)#0"
+
+
+// emitNext() ä¸€æ¬¡å°±æ˜¯ æ¥å—å’Œå‘ä¸‹å¤„ç†æ•°æ®ä¸€æ¬¡; 
+StreamTaskNetworkInput.emitNext() {
+	while (true) {
+		// è¿™é‡Œä¼šæœ‰2æ­¥: 1. ä»bufferä¸­æ‹‰å»;2. è¿›è¡Œååºåˆ—åŒ–; 
+		// è¿™é‡Œçš„ååºåˆ—åŒ–ä¼šå¾ˆæ¶ˆè€—æ€§èƒ½; 
+		DeserializationResult result = currentRecordDeserializer.getNextRecord(deserializationDelegate);
+		if (result.isBufferConsumed()) {
+			currentRecordDeserializer.getCurrentBuffer().recycleBuffer();
+			currentRecordDeserializer = null;
+		}
+		// å¾ªç¯getNextRecord(),çŸ¥é“ isFullRecord, æ˜¯ä¸€ä¸ªå®Œæ•´æ•°æ®, å°±ä¸éœ€è¦ç­‰å¾…äº†; 
+		if (result.isFullRecord()) {
+			// processElement() çœŸæ­£è¿›å…¥æ•°æ®å¤„ç†é€»è¾‘; 
+			processElement(deserializationDelegate.getInstance(), output);
+			return InputStatus.MORE_AVAILABLE;
+		}
+	}
+}
+
 
 StreamTask.processInput(Controller controller){
 	InputStatus status = inputProcessor.processInput();//StreamOneInputProcessor.
@@ -149,16 +170,16 @@ StreamTask.processInput(Controller controller){
                     currentRecordDeserializer = null;
                 }
 				
-				// Êı¾İµ½ÆÚºó, ¾ÍÖ±½Ó´¦ÀíÊı¾İ?
+				// ï¿½ï¿½ï¿½İµï¿½ï¿½Úºï¿½, ï¿½ï¿½Ö±ï¿½Ó´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 				if (result.isFullRecord()) {
 					processElement(deserializationDelegate.getInstance(), output);
 					return InputStatus.MORE_AVAILABLE;
 				}
 			}
-			// µ½ÕâÀï, currentRecordDeserializer = null ËµÃ÷Ê²Ã´? 
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, currentRecordDeserializer = null Ëµï¿½ï¿½Ê²Ã´? 
 			Optional<BufferOrEvent> bufferOrEvent = checkpointedInputGate.pollNext();{//CheckpointedInputGate.pollNext()
 				// pollNext():  Poll the {@link BufferOrEvent}.
-				// ×èÈûµÄ´ÓChannelÖĞ»ñÈ¡ÊäÈëÊı¾İ£¬²¢½«»ñÈ¡µÄÊı¾İ½»¸øËüËù·â×°µÄËã×Ó½øĞĞ´¦Àí£¬Õâ¹¹³ÉÁËÒ»¸öTaskµÄ»ù±¾ÔËĞĞÂß¼­¡£
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Channelï¿½Ğ»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½İ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½â¹¹ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Taskï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½
 				Optional<BufferOrEvent> next = inputGate.pollNext();{
 					return inputGate.pollNext().map(this::updateMetrics);{//SingleInputGate.pollNext()
 						return getNextBufferOrEvent(false);{}{//SingleInputGate.getNextBufferOrEvent()
@@ -171,7 +192,7 @@ StreamTask.processInput(Controller controller){
 											return parent.pollBuffer();{//org.apache.flink.runtime.io.network.partition.PipelinedSubpartition.pollBuffer()
 												while (!buffers.isEmpty()) {
 													bufferConsumerWithPartialRecordLength = buffers.peek();
-													// Ïû·ÑËùÓÃµÄBuffer ?
+													// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Buffer ?
 													BufferConsumer bufferConsumer = bufferConsumerWithPartialRecordLength.getBufferConsumer();
 													buffer = buildSliceBuffer(bufferConsumerWithPartialRecordLength);{
 														return buffer.build();{
@@ -238,7 +259,7 @@ run:570, Task (org.apache.flink.runtime.taskmanager)
 run:748, Thread (java.lang)
 
 
-// Ã»ÓĞÊı¾İÊ±, ÊÇ×èÈûÔÚÕâÀïµÄ 
+// Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
 "Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (2/2)#0" #83 prio=5 os_prio=0 tid=0x00000260ff0dd000 nid=0x3bdc waiting on condition [0x000000bc3b1ff000]
    java.lang.Thread.State: TIMED_WAITING (parking)
@@ -258,16 +279,16 @@ run:748, Thread (java.lang)
 
 
 
-# 2.4 ÏÂÓÎËã×ÓÖ÷TaskÏß³Ì: " Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out " 
+# 2.4 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Taskï¿½ß³ï¿½: " Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out " 
 
 
 2022-10-31 21:13:26,482
-	ÔËĞĞÏß³Ì: 	[thread:  Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (1/2)#0]
-	// ½ÓÊÜÊı¾İÀ´×ÔSubTask: 
-	À´×ÔÄÄ¸ö×ÓÈÎÎñ: 	taskName		[Source: Custom Source -> Map -> Timestamps/Watermarks -> Map (1/2)#0 (9605f0eb031ec0aba532663a04e2f9e0)] 
-	¶¯×÷:				action			PipelinedSubpartition#pollBuffer 
-	»º´æ´óĞ¡			buffer.toString()	Buffer{size=13, hash=-1678597810} @ 
-	ÇşµÀĞÅÏ¢			channelInfo		ResultSubpartitionInfo{partitionIdx=0, subPartitionIdx=0}
+	ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½: 	[thread:  Window(TumblingEventTimeWindows(3000), EventTimeTrigger, MyJsonProcWindow) -> Map -> Sink: Print to Std. Out (1/2)#0]
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SubTask: 
+	ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 	taskName		[Source: Custom Source -> Map -> Timestamps/Watermarks -> Map (1/2)#0 (9605f0eb031ec0aba532663a04e2f9e0)] 
+	ï¿½ï¿½ï¿½ï¿½:				action			PipelinedSubpartition#pollBuffer 
+	ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡			buffer.toString()	Buffer{size=13, hash=-1678597810} @ 
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢			channelInfo		ResultSubpartitionInfo{partitionIdx=0, subPartitionIdx=0}
 	
 LOG.trace("[{}] {} {} @ {}",
                     taskName,
@@ -277,7 +298,7 @@ LOG.trace("[{}] {} {} @ {}",
 
 
 
-# 2.5 ÏÂÓÎËã×ÓÖ÷TaskÏß³Ì: Map -> Timestamps/Watermarks -> Map 
+# 2.5 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Taskï¿½ß³ï¿½: Map -> Timestamps/Watermarks -> Map 
 
 
 

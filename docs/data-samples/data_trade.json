@@ -1,0 +1,21 @@
+[
+  {
+    "trade_id": 3,
+    "trade_type": 203,
+    "branch_id": 3003,
+    "trade_amount": 4000.00,
+    "result_code": 1,
+    "trade_time": "2023-03-15 15:42:20.47"
+  }
+  ,
+  {
+    "trade_id": "TID001120230315154220",
+    "trade_time": "2023-03-15 15:42:21.001",
+    "branch_type": "二级",
+    "branch_name": "分支机构11",
+    "province": "上海",
+    "trade_amount": 100,
+    "result_code": 1
+  }
+
+]
